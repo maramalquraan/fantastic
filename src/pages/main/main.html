@@ -1,6 +1,9 @@
 
 <ion-content padding>
 <button ion-button (click)="loadSideMenu()"><ion-icon name="list" ion-icon></ion-icon></button>
+<ion-buttons end>
+    <button ion-button (click)="addMarker()"><ion-icon name="add"></ion-icon>Add Marker</button>
+</ion-buttons>
 <div #map id="map"></div>
 
 </ion-content>
