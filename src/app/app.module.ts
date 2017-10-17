@@ -8,7 +8,6 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { SignUpPage } from "../pages/sign-up/sign-up";
 import {MainPage} from "../pages/main/main";
-import {MapComponent} from "../components/map/map";
 
 
 @NgModule({
@@ -16,8 +15,7 @@ import {MapComponent} from "../components/map/map";
     MyApp,
     HomePage,
     SignUpPage,
-    MainPage,
-    MapComponent
+    MainPage
   ],
   imports: [
     BrowserModule,
