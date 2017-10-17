@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {MapComponent} from "../../components/map/map";
+
 
 /**
  * Generated class for the MainPage page.
@@ -12,6 +14,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 @Component({
   selector: 'page-main',
   templateUrl: 'main.html',
+  directives: [MapComponent],
 })
 export class MainPage {
 
