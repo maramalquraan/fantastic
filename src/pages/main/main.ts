@@ -24,5 +24,7 @@ export class MainPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad MainPage');
   }
-
+  loadSideMenu(){
+    console.log("clicked")
+  }
 }
