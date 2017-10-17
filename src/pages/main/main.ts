@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-
+import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
+import { AngularFireAuth } from 'angularfire2/auth'
 /**
 * Generated class for the MainPage page.
 *
@@ -17,7 +17,8 @@ declare var google: any;
 export class MainPage {
  @ViewChild('map') mapElement:ElementRef;
  map: any;
- constructor(public navCtrl: NavController, public navParams: NavParams) {
+ constructor( private afAuth : AngularFireAuth, private toast: ToastController,
+   public navCtrl: NavController, public navParams: NavParams) {
  }
 
  ionViewDidLoad() {
@@ -38,5 +39,21 @@ export class MainPage {
      // mapTypeId: google.maps.MapType.G_NORMAL_MAP
    };
    this.map=new google.maps.Map(this.mapElement.nativeElement, mapOptions);
+ }
+ ionViewWillLoad(){
+   this.afAuth.authState.subscribe(data => {
+     if(data && data.email){
+      this.toast.create({
+        message: "welcome to Nany App, ${data.email}",
+        duration: 2000
+      }).present()       
+     }else{
+      this.toast.create({
+        message: "welcome to Nany App, ${data.email}",
+        duration: 2000
+      }).present()  
+     }
+
+   });
  }
 }
