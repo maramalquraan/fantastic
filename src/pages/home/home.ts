@@ -3,7 +3,7 @@ import { NavController } from 'ionic-angular';
 import { SignUpPage } from "../sign-up/sign-up";
 import { MainPage } from "../main/main";
 import { User } from "../../models/user"
-import { AngularFireAuth } from "angularfire2/auth"
+import { AngularFireAuth } from "angularfire2/auth" 
 
 @Component({
   selector: 'page-home',
