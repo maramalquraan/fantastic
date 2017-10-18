@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
+import { AngularFireAuth } from 'angularfire2/auth'
 import { Geolocation } from '@ionic-native/geolocation';
+
 /**
 * Generated class for the MainPage page.
 *
@@ -18,7 +20,10 @@ declare var google: any;
 export class MainPage {
  @ViewChild('map') mapElement:ElementRef;
  map: any;
- constructor(public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation) {
+
+ constructor( private afAuth : AngularFireAuth, private toast: ToastController,
+   public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation) {
+
  }
 
  ionViewDidLoad() {
@@ -30,25 +35,44 @@ export class MainPage {
  loadSideMenu(){
    console.log("clicked");
  }
+  
+  initMap(){
+       
+     this.geolocation.getCurrentPosition().then((position) => {
+ 
+       let location = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+ 
+       let mapOptions = {
+         center: location,
+         zoom: 15,
+         mapTypeId: google.maps.MapTypeId.ROADMAP
+        // mapTypeId: google.maps.MapType.G_NORMAL_MAP
 
- initMap(){
- this.geolocation.getCurrentPosition().then((position) => {
-   
-        let location = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-   
-        let mapOptions = {
-          center: location,
-          zoom: 15,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-         // mapTypeId: google.maps.MapType.G_NORMAL_MAP
+       }
+ 
+       this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
+ 
+     });
+ 
+   }
 
-        }
-   
-        this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-   
-      });
-   
-    }
+ 
+ ionViewWillLoad(){
+   this.afAuth.authState.subscribe(data => {
+     if(data && data.email){
+      this.toast.create({
+        message: "welcome to Nany App, ${data.email}",
+        duration: 2000
+      }).present()       
+     }else{
+      this.toast.create({
+        message: "welcome to Nany App, ${data.email}",
+        duration: 2000
+      }).present()  
+     }
+
+   });
+ }
 
     addMarker(){
      
