@@ -17,19 +17,45 @@ export class HomePage {
     public navCtrl: NavController) {
 
   }
-  async login (user: User){
-    console.log("log in pressed")
-    try {
-    const results = this.afAuth.auth.signInWithEmailAndPassword(user.email,user.password)
-    console.log(results)
-    if(results){
-      this.navCtrl.setRoot(MainPage)
-    }
-    }
-    catch(e){
-      console.error(e)
-    }
+
+
+  login(user: User){
+    let x=this
+    this.afAuth.auth.signInWithEmailAndPassword(user.email, user.password).then(function(){
+      x.navCtrl.push(MainPage)
+    }).catch(function(error) {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      console.log(errorCode,errorMessage)
+      alert(errorMessage)
+
+    });
+    this.afAuth.auth.onAuthStateChanged(function(user) {
+      if (user) {
+        console.log("yaaaaaaay")
+      }
+    });
   }
+
+  // async login (user: User){
+
+  //   try {
+      
+  //   const results = this.afAuth.auth.signInWithEmailAndPassword(user.email,user.password)
+
+  //   if(Error){
+  //     console.log(Error,ErrorEvent)
+  //   }   
+  //   if(results){
+  //     console.log("current user",this.afAuth.auth.login() ,"sendpassrest", this.afAuth.auth.sendPasswordResetEmail,"custom token",this.afAuth.auth.signInWithCustomToken)
+  //     // this.navCtrl.setRoot(MainPage)
+  //   }
+  //   }
+
+  //   catch(e){
+  //     // console.error(e)
+  //   }
+  // }
   loadSignUp() {
     this.navCtrl.push(SignUpPage);
   }
