@@ -24,7 +24,7 @@ export class SignUpPage {
     try {
     const result = await this.afAuth.auth.createUserWithEmailAndPassword(user.email,user.password)
     console.log(result)    
-    this.navCtrl.setRoot(HomePage)
+    this.navCtrl.setRoot(MainPage)
     }
     catch(e){
       console.error(e)
