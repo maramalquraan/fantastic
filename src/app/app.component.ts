@@ -5,13 +5,24 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import firebase from 'firebase';
 import { MainPage } from "../pages/main/main";
 import { HomePage } from '../pages/home/home';
+import { SignUpPage } from "../pages/sign-up/sign-up";
+
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
   rootPage:any = HomePage;
 
+  pages: Array<{ title: string, component: any }>;
+
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
+    
+    this.pages = [
+      { title: 'HomePage', component: HomePage },
+      { title: 'MainPage', component: MainPage },
+      { title: 'SignUpPage', component: SignUpPage }
+    ];
+    
     var config = {
       apiKey: "AIzaSyAUipRdjwgFm76lPfFCVWH84OWKSY5S32I",
       authDomain: "fantastic-13633.firebaseapp.com",
