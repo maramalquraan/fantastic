@@ -4,6 +4,9 @@ import { SignUpPage } from "../sign-up/sign-up";
 import { MainPage } from "../main/main";
 import { User } from "../../models/user"
 import { AngularFireAuth } from "angularfire2/auth"
+import { AngularFireDatabase } from "angularfire2/database";
+import { Observable } from 'rxjs/Observable';
+
 
 @Component({
   selector: 'page-home',
@@ -11,25 +14,59 @@ import { AngularFireAuth } from "angularfire2/auth"
 })
 export class HomePage {
 
-
+  
   user = {} as User;
-  constructor(public afAuth: AngularFireAuth,
-    public navCtrl: NavController) {
+  nani : Observable<any[]>;
 
+  constructor(public afAuth: AngularFireAuth,
+    public navCtrl: NavController,
+    db: AngularFireDatabase) {
+    this.nani = db.object('nani');
+    this.nani.snapshotChanges().subscribe(action => {
+      // console.log(action.type);
+      // console.log(action.key)
+      console.log(action.payload.val())
+    });
   }
-  async login (user: User){
-    console.log("log in pressed")
-    try {
-    const results = this.afAuth.auth.signInWithEmailAndPassword(user.email,user.password)
-    console.log(results)
-    if(results){
-      this.navCtrl.setRoot(MainPage)
-    }
-    }
-    catch(e){
-      console.error(e)
-    }
+      
+
+  login(user: User){
+    let x=this
+    this.afAuth.auth.signInWithEmailAndPassword(user.email, user.password).then(function(){
+      x.navCtrl.push(MainPage)
+    }).catch(function(error) {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      console.log(errorCode,errorMessage)
+      alert(errorMessage)
+
+    });
+    this.afAuth.auth.onAuthStateChanged(function(user) {
+      if (user) {
+        console.log("yaaaaaaay")
+      }
+    });
   }
+
+  // async login (user: User){
+
+  //   try {
+      
+  //   const results = this.afAuth.auth.signInWithEmailAndPassword(user.email,user.password)
+
+  //   if(Error){
+  //     console.log(Error,ErrorEvent)
+  //   }   
+  //   if(results){
+  //     console.log("current user",this.afAuth.auth.login() ,"sendpassrest", this.afAuth.auth.sendPasswordResetEmail,"custom token",this.afAuth.auth.signInWithCustomToken)
+  //     // this.navCtrl.setRoot(MainPage)
+  //   }
+  //   }
+
+  //   catch(e){
+  //     // console.error(e)
+  //   }
+  // }
   loadSignUp() {
     this.navCtrl.push(SignUpPage);
   }
