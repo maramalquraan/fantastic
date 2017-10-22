@@ -11,6 +11,10 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SignUpPage } from "../pages/sign-up/sign-up";
 import {MainPage} from "../pages/main/main";
 import { AuthServiceProvider } from '../providers/auth-service/auth-service';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireDatabase } from 'angularfire2/database';
+
+ 
 
 @NgModule({
   declarations: [
@@ -30,7 +34,9 @@ import { AuthServiceProvider } from '../providers/auth-service/auth-service';
       storageBucket: "fantastic-13633.appspot.com",
       messagingSenderId: "1014964753035"
     }),
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    AngularFireDatabaseModule
+
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -45,6 +51,7 @@ import { AuthServiceProvider } from '../providers/auth-service/auth-service';
     Geolocation,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     AuthServiceProvider
+    
   ]
 })
 export class AppModule {}
