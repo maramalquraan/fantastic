@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angu
 import { AngularFireAuth } from 'angularfire2/auth'
 import { Geolocation } from '@ionic-native/geolocation';
 
+
 /**
 * Generated class for the MainPage page.
 *
@@ -25,6 +26,7 @@ export class MainPage {
    public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation) {
 
  }
+
 
  ionViewDidLoad() {
    this.initMap();

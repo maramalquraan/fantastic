@@ -10,6 +10,11 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SignUpPage } from "../pages/sign-up/sign-up";
 import {MainPage} from "../pages/main/main";
+import { AuthServiceProvider } from '../providers/auth-service/auth-service';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireDatabase } from 'angularfire2/database';
+
+ 
 
 @NgModule({
   declarations: [
@@ -29,7 +34,9 @@ import {MainPage} from "../pages/main/main";
       storageBucket: "fantastic-13633.appspot.com",
       messagingSenderId: "1014964753035"
     }),
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    AngularFireDatabaseModule
+
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -42,7 +49,9 @@ import {MainPage} from "../pages/main/main";
     StatusBar,
     SplashScreen,
     Geolocation,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    AuthServiceProvider
+    
   ]
 })
 export class AppModule {}
