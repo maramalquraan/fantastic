@@ -20,7 +20,7 @@ export class HomePage {
 
   constructor(public afAuth: AngularFireAuth,
     public navCtrl: NavController,
-    db: AngularFireDatabase) {
+    public db: AngularFireDatabase) {
     this.nani = db.object('nani');
     this.nani.snapshotChanges().subscribe(action => {
       // console.log(action.type);
