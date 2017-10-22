@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angu
 import { AngularFireAuth } from 'angularfire2/auth'
 import { Geolocation } from '@ionic-native/geolocation';
 
+
 /**
 * Generated class for the MainPage page.
 *
@@ -10,6 +11,16 @@ import { Geolocation } from '@ionic-native/geolocation';
 * Ionic pages and navigation.
 */
 declare var google: any;
+let naniArr = [
+  { name: "marwa", lat: 30.1866316, long: 36.1376679 },
+  { name: "samya", lat: 28.1866316, long: 31.1376679 },
+  // { name: "leen", lat: 31.963158, long: 35.930359 },
+  { name: "sameera", lat: 28.9866316, long: 31.8376679 },
+  { name: "asma", lat: 38.1866316, long: 27.1376679 },
+  { name: "waed", lat: 23.1966316, long: 31.1378679 }
+];
+
+let position;
 
 @IonicPage()
 @Component({
@@ -26,14 +37,17 @@ export class MainPage {
 
  }
 
+
  ionViewDidLoad() {
    this.initMap();
+   this.findNani();
  
    console.log('ionViewDidLoad MainPage');
  }
  
  loadSideMenu(){
-   console.log("clicked");
+  this.afAuth.auth.signOut()  
+  //  console.log("clicked");
  }
   
   initMap(){
@@ -99,5 +113,41 @@ export class MainPage {
       });
      
     }
+
+    
+  findNani() {
+    this.geolocation.getCurrentPosition().then(position => {
+      let location = new google.maps.LatLng(
+        position.coords.latitude,
+        position.coords.longitude
+      );
+      let result = {};
+      let min = 0;
+      let userLat = position.coords.latitude;
+      let userlong = position.coords.longitude;
+      let distance;
+      for(var i=0; i<naniArr.length; i++){
+        distance= ((userLat-naniArr[i].lat)**2+(userlong-naniArr[i].long)**2)**0.5;
+        result[naniArr[i].name]=distance;
+      }
+      let arrayKeys = Object.keys(result)
+      let firstKey = arrayKeys[0]
+      min = result[firstKey] 
+      // console.log(arrayKeys,firstKey,min )     
+      for(var key in result){
+        if(result[key]<min){
+          min = result[key];
+        }
+      }
+      for(var key in result){
+        if(result[key]===min){
+          let name = key
+        }
+      }
+      console.log(name, min);
+    alert("The nearst nani:" + " " + name + " " + "It is" + " " + Math.floor(min*10)+ " km" +" "+ "far from you");
+    });
+  }
+
    
   }
