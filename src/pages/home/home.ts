@@ -5,7 +5,7 @@ import { MainPage } from "../main/main";
 import { User } from "../../models/user"
 import { AngularFireAuth } from "angularfire2/auth"
 import { AngularFireDatabase } from "angularfire2/database";
-import { Observable } from 'rxjs/Observable';
+// import { Observable } from 'rxjs/Observable';
 
 
 @Component({
@@ -16,21 +16,25 @@ export class HomePage {
 
   
   user = {} as User;
-  nani : Observable<any[]>;
+  nani;
 
   constructor(public afAuth: AngularFireAuth,
     public navCtrl: NavController,
     public db: AngularFireDatabase) {
-    this.nani = db.object('nani');
-    this.nani.snapshotChanges().subscribe(action => {
-      // console.log(action.type);
-      // console.log(action.key)
-      console.log(action.payload.val())
-    });
+     db.object('nani').valueChanges().subscribe(data => {
+       console.log(data)
+       this.nani = data;
+     });
+    // this.nani.snapshotChanges().subscribe(action => {
+    //   // console.log(action.type);
+    //   // console.log(action.key)
+    //   console.log(action.payload.val())
+    // });
   }
       
 
   login(user: User){
+    console.log(this.nani)
     let x=this
     this.afAuth.auth.signInWithEmailAndPassword(user.email, user.password).then(function(){
       x.navCtrl.push(MainPage)
