@@ -14,48 +14,50 @@ import { AngularFireDatabase } from "angularfire2/database";
 })
 export class HomePage {
 
-  
+
   user = {} as User;
   nani;
 
   constructor(public afAuth: AngularFireAuth,
     public navCtrl: NavController,
     public db: AngularFireDatabase) {
-     db.object('nani').valueChanges().subscribe(data => {
-       console.log(data)
-       this.nani = data;
-     });
+    db.object('nani').valueChanges().subscribe(data => {
+      console.log(data)
+      this.nani = data;
+    });
     // this.nani.snapshotChanges().subscribe(action => {
     //   // console.log(action.type);
     //   // console.log(action.key)
     //   console.log(action.payload.val())
     // });
   }
-      
 
-  login(user: User){
-    console.log(this.nani)
-    let x=this
-    this.afAuth.auth.signInWithEmailAndPassword(user.email, user.password).then(function(){
-      x.navCtrl.push(MainPage)
-    }).catch(function(error) {
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      console.log(errorCode,errorMessage)
-      alert(errorMessage)
 
-    });
-    this.afAuth.auth.onAuthStateChanged(function(user) {
-      if (user) {
-        console.log("yaaaaaaay")
-      }
-    });
+  login(user: User) {
+    var Uuser = this.afAuth.auth.currentUser;
+
+    if (Uuser.emailVerified) {
+      let x = this
+      this.afAuth.auth.signInWithEmailAndPassword(user.email, user.password).then(function () {
+        x.navCtrl.push(MainPage)
+      }).catch(function (error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode, errorMessage)
+        alert(errorMessage)
+
+      });
+    } else {
+      console.log("verfirtyyyyy")
+    }
+
+
   }
 
   // async login (user: User){
 
   //   try {
-      
+
   //   const results = this.afAuth.auth.signInWithEmailAndPassword(user.email,user.password)
 
   //   if(Error){
@@ -74,7 +76,7 @@ export class HomePage {
   loadSignUp() {
     this.navCtrl.push(SignUpPage);
   }
-  loadMainPage(){
+  loadMainPage() {
     this.navCtrl.push(MainPage);
   }
 }

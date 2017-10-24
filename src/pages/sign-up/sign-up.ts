@@ -11,7 +11,7 @@ import { MainPage } from "../main/main";
   templateUrl: 'sign-up.html',
 })
 export class SignUpPage {
-  user = {} as User;  
+  user = {} as User;
   constructor(public afAuth: AngularFireAuth,
     public navCtrl: NavController, public navParams: NavParams) {
   }
@@ -19,17 +19,25 @@ export class SignUpPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad SignUpPage');
   }
-  async register (user:User ){
+  async register(user: User) {
     console.log("join pressed")
     try {
-    const result = await this.afAuth.auth.createUserWithEmailAndPassword(user.email,user.password)
-    console.log(result)    
-    this.navCtrl.setRoot(MainPage)
+      const result = await this.afAuth.auth.createUserWithEmailAndPassword(user.email, user.password)
+      console.log(result)
+      this.navCtrl.setRoot(HomePage)
     }
-    catch(e){
+    catch (e) {
       console.error(e)
       alert(e.message)
     }
+    var Uuser = this.afAuth.auth.currentUser;
+
+    Uuser.sendEmailVerification().then(function () {
+      console.log("Email sent..................")
+    }).catch(function (error) {
+      console.log("eror..................")
+
+    });
   }
 
 }
