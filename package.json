@@ -9,7 +9,10 @@
     "build": "ionic-app-scripts build",
     "lint": "ionic-app-scripts lint",
     "ionic:build": "ionic-app-scripts build",
-    "ionic:serve": "ionic-app-scripts serve"
+    "ionic:serve": "ionic-app-scripts serve",
+    "test": "karma start ./test-config/karma.conf.js",
+    "test-ci": "karma start ./test-config/karma.conf.js --single-run",
+    "test-coverage": "karma start ./test-config/karma.conf.js --coverage"
   },
   "dependencies": {
     "@angular/common": "4.4.3",
@@ -21,18 +24,52 @@
     "@angular/platform-browser": "4.4.3",
     "@angular/platform-browser-dynamic": "4.4.3",
     "@ionic-native/core": "4.3.0",
+    "@ionic-native/geolocation": "^4.3.1",
     "@ionic-native/splash-screen": "4.3.0",
     "@ionic-native/status-bar": "4.3.0",
     "@ionic/storage": "2.0.1",
+    "@types/google-maps": "^3.2.0",
+    "angularfire2": "^5.0.0-rc.3",
+    "cordova-plugin-inappbrowser": "^1.7.1",
+    "firebase": "^4.6.0",
     "ionic-angular": "3.7.1",
     "ionicons": "3.0.0",
-    "rxjs": "5.4.3",
+    "rxjs": "^5.4.3",
     "sw-toolbox": "3.6.0",
     "zone.js": "0.8.18"
   },
   "devDependencies": {
     "@ionic/app-scripts": "3.0.0",
+    "@types/jasmine": "^2.6.0",
+    "@types/node": "^8.0.46",
+    "angular2-template-loader": "^0.6.2",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.2.0",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "html-loader": "^0.5.1",
+    "istanbul-instrumenter-loader": "^3.0.0",
+    "jasmine": "^2.8.0",
+    "jasmine-spec-reporter": "^4.2.1",
+    "karma": "^1.7.1",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-coverage-istanbul-reporter": "^1.3.0",
+    "karma-jasmine": "^1.1.0",
+    "karma-jasmine-html-reporter": "^0.2.2",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^2.0.5",
+    "null-loader": "^0.1.1",
+    "protractor": "^5.2.0",
+    "ts-loader": "^3.0.5",
+    "ts-node": "^3.3.0",
     "typescript": "2.3.4"
   },
-  "description": "An Ionic project"
+  "description": "An Ionic project",
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-inappbrowser": {}
+    }
+  }
 }
