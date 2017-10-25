@@ -5,13 +5,24 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import firebase from 'firebase';
 import { MainPage } from "../pages/main/main";
 import { HomePage } from '../pages/home/home';
+import { SignUpPage } from "../pages/sign-up/sign-up";
+
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage:any = HomePage;
+  rootPage: any = HomePage;
+
+  pages: Array<{ title: string, component: any }>;
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
+
+    this.pages = [
+      { title: 'HomePage', component: HomePage },
+      { title: 'MainPage', component: MainPage },
+      { title: 'SignUpPage', component: SignUpPage }
+    ];
+
     var config = {
       apiKey: "AIzaSyAUipRdjwgFm76lPfFCVWH84OWKSY5S32I",
       authDomain: "fantastic-13633.firebaseapp.com",
@@ -19,22 +30,23 @@ export class MyApp {
       projectId: "fantastic-13633",
       storageBucket: "fantastic-13633.appspot.com",
       messagingSenderId: "1014964753035"
-  };
+    };
     firebase.initializeApp(config);
-    
-        firebase.auth().onAuthStateChanged((user) => {
-         if (user === null) {
-           console.log("this should appear if the user is not logged in")
-            // If there's no user logged in send him to the LoginPage
-            this.rootPage = HomePage;
-         } else {
 
-          console.log("this should appear if the user is logged in",user)          
-            // If there's a user take him to the home page.
-            this.rootPage = MainPage;
-          }
-        });
-  
+    firebase.auth().onAuthStateChanged((user) => {
+      console.log("is user vertified? ",user.emailVerified)
+      if (user.emailVerified) {
+        console.log("this should appear if the user is vertified")
+        // If there's no user logged in send him to the LoginPage
+        this.rootPage = MainPage;
+      } else {
+
+        console.log("this should appear if the user not vertified")
+        // If there's a user take him to the home page.
+        this.rootPage = HomePage;
+      }
+    });
+
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
