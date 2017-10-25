@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 import { AngularFireAuth } from 'angularfire2/auth'
 import { Geolocation } from '@ionic-native/geolocation';
+import { HomePage } from "../home/home";
 
 
 /**
@@ -45,10 +46,13 @@ export class MainPage {
     console.log('ionViewDidLoad MainPage');
   }
  
-  loadSideMenu(){
-    this.afAuth.auth.signOut()  
-    //  console.log("clicked");
-  }
+
+ loadSideMenu(){
+  this.afAuth.auth.signOut()  
+  this.navCtrl.setRoot(HomePage)
+   console.log("clicked");
+ }
+
   
 
   initMap() {
