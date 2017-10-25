@@ -34,14 +34,14 @@ export class MyApp {
     firebase.initializeApp(config);
 
     firebase.auth().onAuthStateChanged((user) => {
-      console.log(user.emailVerified)
+      console.log("is user vertified? ",user.emailVerified)
       if (user.emailVerified) {
-        console.log("this should appear if the user is not logged in")
+        console.log("this should appear if the user is vertified")
         // If there's no user logged in send him to the LoginPage
         this.rootPage = MainPage;
       } else {
 
-        console.log("this should appear if the user is logged in", user)
+        console.log("this should appear if the user not vertified")
         // If there's a user take him to the home page.
         this.rootPage = HomePage;
       }
