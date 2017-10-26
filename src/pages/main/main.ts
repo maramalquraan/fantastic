@@ -132,7 +132,8 @@ export class MainPage {
       // var origin = 'Mecca Mall';
       // var origin = {lat: 31.977285, lng: 35.843623};
       // var destination = {lat: 31.955330, lng: 35.834616};
-      var origin = document.getElementById('start').value;
+      // var origin = document.getElementById('start').value;
+      var origin = {lat: 31.977285, lng: 35.843623};
       var destination = x.userPosition;
       var geocoder = new google.maps.Geocoder;
       var service = new google.maps.DistanceMatrixService;
@@ -170,7 +171,8 @@ export class MainPage {
         markerArray[i].setMap(null);
       }
       directionsService.route({
-        origin: document.getElementById('start').value,
+        origin: {lat: 31.977285, lng: 35.843623},
+        // origin: document.getElementById('start').value,
         destination: x.userPosition,
         travelMode: 'DRIVING'
       }, function(response, status) {
