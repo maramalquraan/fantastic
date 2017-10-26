@@ -23,6 +23,7 @@ let naniArr = [
 
 let position;
 
+
 @IonicPage()
 @Component({
  selector: 'page-main',
@@ -30,6 +31,7 @@ let position;
 })
 
 export class MainPage {
+
     splash = true;
 
  @ViewChild('map') mapElement:ElementRef;
@@ -38,7 +40,12 @@ export class MainPage {
  constructor( private afAuth : AngularFireAuth, private toast: ToastController,
    public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation) {
 
- }
+
+  constructor( private afAuth : AngularFireAuth, private toast: ToastController,
+    public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation) {
+
+  }
+  userPosition;
 
 
  ionViewDidLoad() {
@@ -49,51 +56,23 @@ export class MainPage {
  
    console.log('ionViewDidLoad MainPage');
  }
+
  
+
  loadSideMenu(){
   this.afAuth.auth.signOut()  
   this.navCtrl.setRoot(HomePage)
    console.log("clicked");
  }
-  
-  // initMap(){
-       
-  //    this.geolocation.getCurrentPosition().then((position) => {
- 
-  //     //  let location = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-  //      let location = new google.maps.LatLng(37.772, -122.214);
-       
- 
-  //      let mapOptions = {
-  //        center: location,
-  //        zoom: 15,
-  //        mapTypeId: google.maps.MapTypeId.ROADMAP
-  //       // mapTypeId: google.maps.MapType.G_NORMAL_MAP
 
-  //      }
- 
-  //      this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
- 
-  //    });
-  //    let flightPlanCoordinates = [
-  //     {lat: 37.772, lng: -122.214},
-  //     {lat: 21.291, lng: -157.821},
-  //     {lat: -18.142, lng: 178.431},
-  //     {lat: -27.467, lng: 153.027}
-  //   ];
-  //    let flightPath = new google.maps.Polyline({
-  //     path: flightPlanCoordinates,
-  //     geodesic: true,
-  //     strokeColor: '#FF0000',
-  //     strokeOpacity: 1.0,
-  //     strokeWeight: 2
-  //   });
-  //   flightPath.setMap(this.map);
- 
-  //  }
+  
 
   initMap() {
+    let x = this;
     this.geolocation.getCurrentPosition().then((position) => {
+      // console.log(position)
+      x.userPosition = {lat: position.coords.latitude, lng: position.coords.longitude}
+      console.log(x.userPosition)
       let location = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
       this.map = new google.maps.Map(document.getElementById('map'), {
         zoom: 15,
@@ -102,8 +81,6 @@ export class MainPage {
       });
     })
   }
-
- ////////////////////////////////////////////////
 
   ionViewWillLoad(){
     this.afAuth.authState.subscribe(data => {
@@ -145,8 +122,9 @@ export class MainPage {
 //     flightPath.setMap(this.map);
 //   }
 
-////////////////////////////////////////////
-    direction(){
+
+    showDirectionAndDuration(){
+      //direction code
       let x = this;
       let markerArray = [];
       let directionsService = new google.maps.DirectionsService;
@@ -157,81 +135,18 @@ export class MainPage {
         x.calculateAndDisplayRoute(directionsDisplay, directionsService, markerArray, stepDisplay, this.map);
       };
       document.getElementById('start').addEventListener('change', onChangeHandler);
-      document.getElementById('end').addEventListener('change', onChangeHandler);
-    }
+      // document.getElementById('end').addEventListener('change', onChangeHandler);
 
-    /////////////////////////////////////////////
-
-    calculateAndDisplayRoute(directionsDisplay, directionsService, markerArray, stepDisplay, map){
-      let x = this;
-      for (var i = 0; i < markerArray.length; i++) {
-        markerArray[i].setMap(null);
-      }
-      directionsService.route({
-        origin: document.getElementById('start').value,
-        destination: document.getElementById('end').value,
-        travelMode: 'DRIVING'
-      }, function(response, status) {
-        // Route the directions and pass the response to a function to create
-        // markers for each step.
-        if (status === 'OK') {
-          document.getElementById('warnings-panel').innerHTML =
-              '<b>' + response.routes[0].warnings + '</b>';
-          directionsDisplay.setDirections(response);
-          x.showSteps(response, markerArray, stepDisplay, map);
-        } else {
-          window.alert('Directions request failed due to ' + status);
-        }
-      });
-    }
-
-    /////////////////////////////////////////////////////
-
-    showSteps(directionResult, markerArray, stepDisplay, map){
-      var myRoute = directionResult.routes[0].legs[0];
-      for (var i = 0; i < myRoute.steps.length; i++) {
-        var marker = markerArray[i] = markerArray[i] || new google.maps.Marker;
-        marker.setMap(map);
-        marker.setPosition(myRoute.steps[i].start_location);
-        this.attachInstructionText(stepDisplay, marker, myRoute.steps[i].instructions, map);
-      }
-    }
-
-    ////////////////////////////////////////////////////
-
-    attachInstructionText(stepDisplay, marker, text, map){
-      google.maps.event.addListener(marker, 'click', function() {
-        // Open an info window when the marker is clicked on, containing the text
-        // of the step.
-        stepDisplay.setContent(text);
-        stepDisplay.open(map, marker);
-      });
-    }
-
-    //////////////////////////////////////////
-
-    addMarker(){
-      let marker = new google.maps.Marker({
-        map: this.map,
-        animation: google.maps.Animation.DROP,
-        position: this.map.getCenter()
-      });
-      let content = "<h4>Information..</h4>";        
-      this.addInfoWindow(marker, content);
-    }
-
-    /////////////////////////////////////
-
-    duration(){
-      let x = this;
+      //duration code
+      
       var bounds = new google.maps.LatLngBounds;
-      var markersArray = [];
       // var destination = 'Yaser Mall';
       // var origin = 'Mecca Mall';
       // var origin = {lat: 31.977285, lng: 35.843623};
       // var destination = {lat: 31.955330, lng: 35.834616};
-      var origin = document.getElementById('start').value;
-      var destination = document.getElementById('end').value;
+      // var origin = document.getElementById('start').value;
+      var origin = {lat: 31.977285, lng: 35.843623};
+      var destination = x.userPosition;
       var geocoder = new google.maps.Geocoder;
       var service = new google.maps.DistanceMatrixService;
       service.getDistanceMatrix({
@@ -251,6 +166,7 @@ export class MainPage {
               outputDiv.innerHTML = '';
               for (var i = 0; i < originList.length; i++) {
                 var results = response.rows[i].elements;
+                console.log(results)
                 for (var j = 0; j < results.length; j++) {
                 outputDiv.innerHTML += originList[i] + ' to ' + destinationList[j] +
                   ': ' + results[j].distance.text + ' in ' +
@@ -261,7 +177,58 @@ export class MainPage {
         });
     }
 
-   //////////////////////////////////////
+    calculateAndDisplayRoute(directionsDisplay, directionsService, markerArray, stepDisplay, map){
+      let x = this;
+      for (var i = 0; i < markerArray.length; i++) {
+        markerArray[i].setMap(null);
+      }
+      directionsService.route({
+        origin: {lat: 31.977285, lng: 35.843623},
+        // origin: document.getElementById('start').value,
+        destination: x.userPosition,
+        travelMode: 'DRIVING'
+      }, function(response, status) {
+        // Route the directions and pass the response to a function to create
+        // markers for each step.
+        if (status === 'OK') {
+          document.getElementById('warnings-panel').innerHTML =
+              '<b>' + response.routes[0].warnings + '</b>';
+          directionsDisplay.setDirections(response);
+          x.showSteps(response, markerArray, stepDisplay, map);
+        } else {
+          window.alert('Directions request failed due to ' + status);
+        }
+      });
+    }
+
+    showSteps(directionResult, markerArray, stepDisplay, map){
+      var myRoute = directionResult.routes[0].legs[0];
+      for (var i = 0; i < myRoute.steps.length; i++) {
+        var marker = markerArray[i] = markerArray[i] || new google.maps.Marker;
+        marker.setMap(map);
+        marker.setPosition(myRoute.steps[i].start_location);
+        this.attachInstructionText(stepDisplay, marker, myRoute.steps[i].instructions, map);
+      }
+    }
+
+    attachInstructionText(stepDisplay, marker, text, map){
+      google.maps.event.addListener(marker, 'click', function() {
+        // Open an info window when the marker is clicked on, containing the text
+        // of the step.
+        stepDisplay.setContent(text);
+        stepDisplay.open(map, marker);
+      });
+    }
+
+    addMarker(){
+      let marker = new google.maps.Marker({
+        map: this.map,
+        animation: google.maps.Animation.DROP,
+        position: this.map.getCenter()
+      });
+      let content = "<h4>Information..</h4>";        
+      this.addInfoWindow(marker, content);
+    }
     
     addInfoWindow(marker, content){
       let infoWindow = new google.maps.InfoWindow({
@@ -307,15 +274,17 @@ export class MainPage {
       for(var key in result){
         if(result[key]<min){
           min = result[key];
+
+          }
         }
-      }
-      for(var key in result){
-        if(result[key]===min){
-          let name = key
+
+        for(var key in result){
+          if(result[key]===min){
+            let name = key
+          }
         }
-      }
-      console.log(name, min);
-    alert("The nearst nani:" + " " + name + " " + "It is" + " " + Math.floor(min)+ " km" +" "+ "far from you");
-    });
-  }
+        console.log(name, min);
+      alert("The nearst nani:" + " " + name + " " + "It is" + " " + Math.floor(min*10)+ " km" +" "+ "far from you");
+      });
+    }
 }

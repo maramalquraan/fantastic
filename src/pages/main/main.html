@@ -17,27 +17,26 @@
     <button ion-button (click)="findNani()"><ion-icon name="add"></ion-icon>Find Nani</button>
 </ion-buttons>
 <div id="output"></div>
-<ion-buttons>
-    <button ion-button (click)="duration()"><ion-icon name="add"></ion-icon>Show Duration</button>
-</ion-buttons>
 <!-- <ion-buttons>
         <button ion-button (click)="addpolyLine()"><ion-icon name="add"></ion-icon>Add PolyLine</button>
 </ion-buttons> -->
+<ion-buttons>
+        <button ion-button (click)="showDirectionAndDuration()"><ion-icon name="add"></ion-icon>Show Direction</button>
+</ion-buttons>
 <div id="floating-panel">
         <b>Start: </b>
         <select id="start">
           <option value="Mecca Mall">Mecca Mall</option>
-        </select>
-        <b>End: </b>
-        <select id="end">
           <option value="Yaser Mall">Yaser Mall</option>
+
+        </select>
+        <!-- <b>End: </b>
+        <select id="end">
           <option value="RDr. Fayez Sabri Jaber Farms">Maram's House</option>
           <option value="Anwar Hamoudeh">Jwan's House</option>
-        </select>
-        </div>
-        <ion-buttons>
-            <button ion-button (click)="direction()"><ion-icon name="add"></ion-icon>Show Direction</button>
-        </ion-buttons>
+        </select>-->
+        </div> 
+
 <div #map id="map">
     
 </div>

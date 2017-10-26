@@ -5,6 +5,7 @@ import { MainPage } from "../main/main";
 import { User } from "../../models/user"
 import { AngularFireAuth } from "angularfire2/auth"
 import { AngularFireDatabase } from "angularfire2/database";
+import firebase from 'firebase';
 // import { Observable } from 'rxjs/Observable';
 
 
@@ -37,7 +38,7 @@ export class HomePage {
     setTimeout(() => this.splash = false, 4000);
   }
   login(user: User) {
-    // console.log("debuggg",user)
+    console.log("debuggg",user)
     // if(Error){
     //   alert(Error)
     // }
@@ -57,6 +58,18 @@ export class HomePage {
         console.log("we are inside login error ")
         alert(errorMessage)
       });
+  }
+
+  loginWithFB(){
+    let provider = new firebase.auth.FacebookAuthProvider();
+
+    firebase.auth().signInWithRedirect(provider).then(()=>{
+      firebase.auth().getRedirectResult().then((result)=>{
+        alert(JSON.stringify(result));
+      }).catch(function(error){
+        alert(JSON.stringify(error))
+      });
+    })
   }
 
   // async login (user: User){
