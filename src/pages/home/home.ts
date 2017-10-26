@@ -14,7 +14,8 @@ import firebase from 'firebase';
   templateUrl: 'home.html'
 })
 export class HomePage {
-
+  splash = true;
+  
 
   user = {} as User;
   nani;
@@ -33,7 +34,9 @@ export class HomePage {
     // });
   }
 
-
+  ionViewDidLoad() {
+    setTimeout(() => this.splash = false, 4000);
+  }
   login(user: User) {
     console.log("debuggg",user)
     // if(Error){

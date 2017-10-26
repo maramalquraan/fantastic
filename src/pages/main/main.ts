@@ -31,8 +31,15 @@ let position;
 })
 
 export class MainPage {
-  @ViewChild('map') mapElement:ElementRef;
-  map: any;
+
+    splash = true;
+
+ @ViewChild('map') mapElement:ElementRef;
+ map: any;
+
+ constructor( private afAuth : AngularFireAuth, private toast: ToastController,
+   public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation) {
+
 
   constructor( private afAuth : AngularFireAuth, private toast: ToastController,
     public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation) {
@@ -40,11 +47,16 @@ export class MainPage {
   }
   userPosition;
 
-  ionViewDidLoad() {
-    this.initMap();
-    //  this.findNani();
-    console.log('ionViewDidLoad MainPage');
-  }
+
+ ionViewDidLoad() {
+  setTimeout(() => this.splash = false, 4000);
+  
+   this.initMap();
+   this.findNani();
+ 
+   console.log('ionViewDidLoad MainPage');
+ }
+
  
 
  loadSideMenu(){
@@ -227,30 +239,45 @@ export class MainPage {
       });
     }
 
-    findNani() {
-      this.geolocation.getCurrentPosition().then(position => {
-        let location = new google.maps.LatLng(
-          position.coords.latitude,
-          position.coords.longitude
-        );
-        let result = {};
-        let min = 0;
-        let userLat = position.coords.latitude;
-        let userlong = position.coords.longitude;
-        let distance;
-        for(var i=0; i<naniArr.length; i++){
-          distance= ((userLat-naniArr[i].lat)**2+(userlong-naniArr[i].long)**2)**0.5;
-          result[naniArr[i].name]=distance;
-        }
-        let arrayKeys = Object.keys(result);
-        let firstKey = arrayKeys[0];
-        min = result[firstKey];
-        // console.log(arrayKeys,firstKey,min )     
-        for(var key in result){
-          if(result[key]<min){
-            min = result[key];
+    /////////////////////////////////////////////////////////
+
+  findNani() {
+    this.geolocation.getCurrentPosition().then(position => {
+      let location = new google.maps.LatLng(
+        position.coords.latitude,
+        position.coords.longitude
+      );
+      let result = {};
+      let min = 0;
+      let lat2 = position.coords.latitude;
+      let lon2 = position.coords.longitude;
+      let distance;
+      for(var i=0; i<naniArr.length; i++){
+        var R = 6371; // Radius of the earth in km
+        var dLat = (Math.PI/180)*(lat2-naniArr[i].lat);  // deg2rad below
+        var dLon = (Math.PI/180)*(lon2-naniArr[i].long); 
+        var a = 
+          Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos((Math.PI/180)*(naniArr[i].lat)) * Math.cos((Math.PI/180)*(lat2)) * 
+          Math.sin(dLon/2) * Math.sin(dLon/2)
+          ; 
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        var d = R * c; // Distance in km
+
+        console.log(naniArr[i].name,d)
+        result[naniArr[i].name]=d;
+      }
+      let arrayKeys = Object.keys(result);
+      let firstKey = arrayKeys[0];
+      min = result[firstKey];
+      // console.log(arrayKeys,firstKey,min )     
+      for(var key in result){
+        if(result[key]<min){
+          min = result[key];
+
           }
         }
+
         for(var key in result){
           if(result[key]===min){
             let name = key
