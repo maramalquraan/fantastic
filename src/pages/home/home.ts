@@ -13,7 +13,8 @@ import { AngularFireDatabase } from "angularfire2/database";
   templateUrl: 'home.html'
 })
 export class HomePage {
-
+  splash = true;
+  
 
   user = {} as User;
   nani;
@@ -32,7 +33,9 @@ export class HomePage {
     // });
   }
 
-
+  ionViewDidLoad() {
+    setTimeout(() => this.splash = false, 4000);
+  }
   login(user: User) {
     // console.log("debuggg",user)
     // if(Error){
