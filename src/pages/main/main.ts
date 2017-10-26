@@ -3,8 +3,6 @@ import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angu
 import { AngularFireAuth } from 'angularfire2/auth'
 import { Geolocation } from '@ionic-native/geolocation';
 import { HomePage } from "../home/home";
-
-
 /**
 * Generated class for the MainPage page.
 *
@@ -20,53 +18,31 @@ let naniArr = [
   { name: "asma", lat: 38.1866316, long: 27.1376679 },
   { name: "waed", lat: 23.1966316, long: 31.1378679 }
 ];
-
 let position;
-
-
 @IonicPage()
 @Component({
  selector: 'page-main',
  templateUrl: 'main.html',
 })
-
 export class MainPage {
-
-    splash = true;
-
- @ViewChild('map') mapElement:ElementRef;
- map: any;
-
- constructor( private afAuth : AngularFireAuth, private toast: ToastController,
-   public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation) {
-
-
+  @ViewChild('map') mapElement:ElementRef;
+  map: any;
   constructor( private afAuth : AngularFireAuth, private toast: ToastController,
     public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation) {
-
   }
   userPosition;
-
-
- ionViewDidLoad() {
-  setTimeout(() => this.splash = false, 4000);
-  
-   this.initMap();
-   this.findNani();
+  ionViewDidLoad() {
+    this.initMap();
+    //  this.findNani();
+    console.log('ionViewDidLoad MainPage');
+  }
  
-   console.log('ionViewDidLoad MainPage');
- }
-
- 
-
  loadSideMenu(){
   this.afAuth.auth.signOut()  
   this.navCtrl.setRoot(HomePage)
    console.log("clicked");
  }
-
   
-
   initMap() {
     let x = this;
     this.geolocation.getCurrentPosition().then((position) => {
@@ -81,7 +57,6 @@ export class MainPage {
       });
     })
   }
-
   ionViewWillLoad(){
     this.afAuth.authState.subscribe(data => {
       if(data && data.email){
@@ -97,9 +72,7 @@ export class MainPage {
       }
     });
   }
-
  ////////////////////////////////////////////////
-
 //  addpolyLine(){
      
 //     let flightPlanCoordinates = [
@@ -118,11 +91,8 @@ export class MainPage {
 //       strokeOpacity: 1.0,
 //       strokeWeight: 2
 //     });
-
 //     flightPath.setMap(this.map);
 //   }
-
-
     showDirectionAndDuration(){
       //direction code
       let x = this;
@@ -136,7 +106,6 @@ export class MainPage {
       };
       document.getElementById('start').addEventListener('change', onChangeHandler);
       // document.getElementById('end').addEventListener('change', onChangeHandler);
-
       //duration code
       
       var bounds = new google.maps.LatLngBounds;
@@ -144,8 +113,7 @@ export class MainPage {
       // var origin = 'Mecca Mall';
       // var origin = {lat: 31.977285, lng: 35.843623};
       // var destination = {lat: 31.955330, lng: 35.834616};
-      // var origin = document.getElementById('start').value;
-      var origin = {lat: 31.977285, lng: 35.843623};
+      var origin = document.getElementById('start').value;
       var destination = x.userPosition;
       var geocoder = new google.maps.Geocoder;
       var service = new google.maps.DistanceMatrixService;
@@ -176,15 +144,13 @@ export class MainPage {
             }
         });
     }
-
     calculateAndDisplayRoute(directionsDisplay, directionsService, markerArray, stepDisplay, map){
       let x = this;
       for (var i = 0; i < markerArray.length; i++) {
         markerArray[i].setMap(null);
       }
       directionsService.route({
-        origin: {lat: 31.977285, lng: 35.843623},
-        // origin: document.getElementById('start').value,
+        origin: document.getElementById('start').value,
         destination: x.userPosition,
         travelMode: 'DRIVING'
       }, function(response, status) {
@@ -200,7 +166,6 @@ export class MainPage {
         }
       });
     }
-
     showSteps(directionResult, markerArray, stepDisplay, map){
       var myRoute = directionResult.routes[0].legs[0];
       for (var i = 0; i < myRoute.steps.length; i++) {
@@ -210,7 +175,6 @@ export class MainPage {
         this.attachInstructionText(stepDisplay, marker, myRoute.steps[i].instructions, map);
       }
     }
-
     attachInstructionText(stepDisplay, marker, text, map){
       google.maps.event.addListener(marker, 'click', function() {
         // Open an info window when the marker is clicked on, containing the text
@@ -219,7 +183,6 @@ export class MainPage {
         stepDisplay.open(map, marker);
       });
     }
-
     addMarker(){
       let marker = new google.maps.Marker({
         map: this.map,
@@ -238,46 +201,30 @@ export class MainPage {
         infoWindow.open(this.map, marker);
       });
     }
-
-    /////////////////////////////////////////////////////////
-
-  findNani() {
-    this.geolocation.getCurrentPosition().then(position => {
-      let location = new google.maps.LatLng(
-        position.coords.latitude,
-        position.coords.longitude
-      );
-      let result = {};
-      let min = 0;
-      let lat2 = position.coords.latitude;
-      let lon2 = position.coords.longitude;
-      let distance;
-      for(var i=0; i<naniArr.length; i++){
-        var R = 6371; // Radius of the earth in km
-        var dLat = (Math.PI/180)*(lat2-naniArr[i].lat);  // deg2rad below
-        var dLon = (Math.PI/180)*(lon2-naniArr[i].long); 
-        var a = 
-          Math.sin(dLat/2) * Math.sin(dLat/2) +
-          Math.cos((Math.PI/180)*(naniArr[i].lat)) * Math.cos((Math.PI/180)*(lat2)) * 
-          Math.sin(dLon/2) * Math.sin(dLon/2)
-          ; 
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-        var d = R * c; // Distance in km
-
-        console.log(naniArr[i].name,d)
-        result[naniArr[i].name]=d;
-      }
-      let arrayKeys = Object.keys(result);
-      let firstKey = arrayKeys[0];
-      min = result[firstKey];
-      // console.log(arrayKeys,firstKey,min )     
-      for(var key in result){
-        if(result[key]<min){
-          min = result[key];
-
+    findNani() {
+      this.geolocation.getCurrentPosition().then(position => {
+        let location = new google.maps.LatLng(
+          position.coords.latitude,
+          position.coords.longitude
+        );
+        let result = {};
+        let min = 0;
+        let userLat = position.coords.latitude;
+        let userlong = position.coords.longitude;
+        let distance;
+        for(var i=0; i<naniArr.length; i++){
+          distance= ((userLat-naniArr[i].lat)**2+(userlong-naniArr[i].long)**2)**0.5;
+          result[naniArr[i].name]=distance;
+        }
+        let arrayKeys = Object.keys(result);
+        let firstKey = arrayKeys[0];
+        min = result[firstKey];
+        // console.log(arrayKeys,firstKey,min )     
+        for(var key in result){
+          if(result[key]<min){
+            min = result[key];
           }
         }
-
         for(var key in result){
           if(result[key]===min){
             let name = key
