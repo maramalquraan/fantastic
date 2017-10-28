@@ -23,6 +23,7 @@ let position;
 
 export class MainPage {
   @ViewChild('map') mapElement:ElementRef;
+  splash=true;
   map: any;
   nani;
 
@@ -43,6 +44,7 @@ export class MainPage {
     this.initMap();
     this.findNani();
     console.log('ionViewDidLoad MainPage');
+    setTimeout(() => this.splash = false, 3000);
   }
  
  loadSideMenu(){
