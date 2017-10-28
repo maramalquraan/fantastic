@@ -5,7 +5,8 @@ import { MainPage } from "../main/main";
 import { User } from "../../models/user"
 import { AngularFireAuth } from "angularfire2/auth"
 import { AngularFireDatabase } from "angularfire2/database";
-import { Observable } from 'rxjs/Observable';
+import firebase from 'firebase';
+// import { Observable } from 'rxjs/Observable';
 
 
 @Component({
@@ -13,45 +14,68 @@ import { Observable } from 'rxjs/Observable';
   templateUrl: 'home.html'
 })
 export class HomePage {
-
+  splash = true;
   
+
   user = {} as User;
-  nani : Observable<any[]>;
+  nani;
 
   constructor(public afAuth: AngularFireAuth,
     public navCtrl: NavController,
     public db: AngularFireDatabase) {
-    this.nani = db.object('nani');
-    this.nani.snapshotChanges().subscribe(action => {
-      // console.log(action.type);
-      // console.log(action.key)
-      console.log(action.payload.val())
+    db.object('nani').valueChanges().subscribe(data => {
+      console.log(data)
+      this.nani = data;
     });
+    // this.nani.snapshotChanges().subscribe(action => {
+    //   // console.log(action.type);
+    //   // console.log(action.key)
+    //   console.log(action.payload.val())
+    // });
   }
-      
 
-  login(user: User){
-    let x=this
-    this.afAuth.auth.signInWithEmailAndPassword(user.email, user.password).then(function(){
-      x.navCtrl.push(MainPage)
-    }).catch(function(error) {
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      console.log(errorCode,errorMessage)
-      alert(errorMessage)
+  ionViewDidLoad() {
+    setTimeout(() => this.splash = false, 4000);
+  }
+  login(user: User) {
+    console.log("debuggg",user)
+    // if(Error){
+    //   alert(Error)
+    // }
+      let x = this
+      this.afAuth.auth.signInWithEmailAndPassword(user.email, user.password).then(function () {
+        var Uuser = x.afAuth.auth.currentUser;
+        console.log("user", Uuser.emailVerified,"sign in" )
+        if (Uuser.emailVerified) {
+          console.log('omg ok')
+          x.navCtrl.push(MainPage)
+        } else {
+          alert("you are not vertified please go to you email"+ user.email +"to vertify you account")
+        }
+      }).catch(function (error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log("we are inside login error ")
+        alert(errorMessage)
+      });
+  }
 
-    });
-    this.afAuth.auth.onAuthStateChanged(function(user) {
-      if (user) {
-        console.log("yaaaaaaay")
-      }
-    });
+  loginWithFB(){
+    let provider = new firebase.auth.FacebookAuthProvider();
+
+    firebase.auth().signInWithRedirect(provider).then(()=>{
+      firebase.auth().getRedirectResult().then((result)=>{
+        alert(JSON.stringify(result));
+      }).catch(function(error){
+        alert(JSON.stringify(error))
+      });
+    })
   }
 
   // async login (user: User){
 
   //   try {
-      
+
   //   const results = this.afAuth.auth.signInWithEmailAndPassword(user.email,user.password)
 
   //   if(Error){
@@ -70,7 +94,7 @@ export class HomePage {
   loadSignUp() {
     this.navCtrl.push(SignUpPage);
   }
-  loadMainPage(){
+  loadMainPage() {
     this.navCtrl.push(MainPage);
   }
 }
