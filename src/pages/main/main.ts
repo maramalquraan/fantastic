@@ -198,17 +198,22 @@ export class MainPage {
 
     
 trackNani(){
-  console.log("initial toggle state", this.toggleStatus )  
+  console.log("initial toggle state", this.toggleStatus ) 
+  // var db = firebase.database();    
+  // db.ref("nani/YdSV2gxkYoO84TtnOoOjBauEJB33").update({ ava}); 
   if(this.toggleStatus === true){        
         console.log("start tracking")
         let flag= false;
         console.log("<<<<", this.nani)
         let naniesFix=this.nani;
-        var Uuser = this.afAuth.auth.currentUser;  
+        var Uuser = this.afAuth.auth.currentUser; 
         console.log("nnnnn", naniesFix, Uuser.uid);    
         for(var key in naniesFix){
           if(key===Uuser.uid){
             flag=true;
+            console.log("flag true")
+            var db = firebase.database();    
+            db.ref("nani/"+Uuser.uid).update({ available : true});
           }
         }
     let that = this
@@ -221,9 +226,9 @@ trackNani(){
             );
             let naniLat = position.coords.latitude;
             let nanilng = position.coords.longitude;
-              console.log(naniLat,nanilng)
+              console.log("hereeeee",naniLat,nanilng,Uuser.uid)
               var db = firebase.database();    
-              db.ref("nani/YdSV2gxkYoO84TtnOoOjBauEJB33").update({ lat: naniLat, lng:nanilng});
+              db.ref("nani/"+Uuser.uid).update({ lat: naniLat, lng:nanilng});
               console.log("vvvvvv",Uuser.uid,naniLat,nanilng)
               
           })
@@ -233,6 +238,9 @@ trackNani(){
   }else{
     console.log("inside false")
     clearInterval(intervalFunc)
+    var Uuser = this.afAuth.auth.currentUser;     
+    var db = firebase.database();    
+    db.ref("nani/"+Uuser.uid).update({ available : false});
   }
 
 }
