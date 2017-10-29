@@ -24,7 +24,7 @@ export class HomePage {
     public navCtrl: NavController,
     public db: AngularFireDatabase) {
     db.object('nani').valueChanges().subscribe(data => {
-      console.log(data)
+      // console.log(data)
       this.nani = data;
     });
     }
