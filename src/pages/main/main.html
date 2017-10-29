@@ -8,6 +8,7 @@
 
 
 <ion-content padding>
+<ion-toggle [(ngModel)]="toggleStatus" pulsado checked="false" (ionChange)="trackNani()">  </ion-toggle>
 <button ion-button (click)="loadSideMenu()"><ion-icon name="list" ion-icon></ion-icon></button>
 <ion-buttons end>
     <button ion-button (click)="addMarker()"><ion-icon name="add"></ion-icon>Add Marker</button>

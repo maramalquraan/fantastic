@@ -34,11 +34,12 @@ export class MainPage {
 
   public isRequested: boolean;
   public isCanceled: boolean;
- 
-  constructor( private afAuth : AngularFireAuth, private toast: ToastController,
+  public toggleStatus: boolean;
+  constructor( private afAuth : AngularFireAuth, private toast: ToastController, 
     public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation,  public db: AngularFireDatabase ) {
       this.isRequested = false;
       this.isCanceled= false;
+      this.toggleStatus=false;
       let database=firebase.database();
       db.object('nani').valueChanges().subscribe(data => {
         this.nani= data;
@@ -196,37 +197,44 @@ export class MainPage {
 
 
     
-     trackNani(){
-      console.log("start tracking")
-      let flag= false;
-      console.log("<<<<", this.nani)
-      let naniesFix=this.nani;
-      var Uuser = this.afAuth.auth.currentUser;  
-      console.log("nnnnn", naniesFix, Uuser.uid);    
-      for(var key in naniesFix){
-        if(key===Uuser.uid){
-          flag=true;
+trackNani(){
+  console.log("initial toggle state", this.toggleStatus )  
+  if(this.toggleStatus === true){        
+        console.log("start tracking")
+        let flag= false;
+        console.log("<<<<", this.nani)
+        let naniesFix=this.nani;
+        var Uuser = this.afAuth.auth.currentUser;  
+        console.log("nnnnn", naniesFix, Uuser.uid);    
+        for(var key in naniesFix){
+          if(key===Uuser.uid){
+            flag=true;
+          }
+        }
+    let that = this
+    if(flag===true){
+      var intervalFunc = setInterval(function timer() {
+          that.geolocation.getCurrentPosition().then(position => {
+            let location = new google.maps.LatLng(
+              position.coords.latitude,
+              position.coords.longitude
+            );
+            let naniLat = position.coords.latitude;
+            let nanilng = position.coords.longitude;
+              console.log(naniLat,nanilng)
+              var db = firebase.database();    
+              db.ref("nani/YdSV2gxkYoO84TtnOoOjBauEJB33").update({ lat: naniLat, lng:nanilng});
+              console.log("vvvvvv",Uuser.uid,naniLat,nanilng)
+              
+          })
+      
+        }, 1000); 
     }
+  }else{
+    console.log("inside false")
+    clearInterval(intervalFunc)
   }
-  let that = this
-  if(flag===true){
-  setInterval(function timer() {
-    that.geolocation.getCurrentPosition().then(position => {
-      let location = new google.maps.LatLng(
-        position.coords.latitude,
-        position.coords.longitude
-      );
-      let naniLat = position.coords.latitude;
-      let nanilng = position.coords.longitude;
-         console.log(naniLat,nanilng)
-         var db = firebase.database();    
-         db.ref("nani/YdSV2gxkYoO84TtnOoOjBauEJB33").update({ lat: naniLat, lng:nanilng});
-         console.log("vvvvvv",Uuser.uid,naniLat,nanilng)
-         
-    })
-  
-  }, 1000); 
-}
+
 }
 
     findNani() {
