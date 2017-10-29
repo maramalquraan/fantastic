@@ -30,6 +30,7 @@ export class MainPage {
   map: any;
   user = {} as User;  
   nani;
+  coordinates = {};
   nanies;
 
   public isRequested: boolean;
@@ -106,7 +107,7 @@ export class MainPage {
       // var origin = 'Mecca Mall';
       // var origin = {lat: 31.977285, lng: 35.843623};
       // var destination = {lat: 31.955330, lng: 35.834616};
-      var origin = document.getElementById('start').value;
+      var origin = this.coordinates;
       var destination = x.userPosition;
       var geocoder = new google.maps.Geocoder;
       var service = new google.maps.DistanceMatrixService;
@@ -143,7 +144,7 @@ export class MainPage {
         markerArray[i].setMap(null);
       }
       directionsService.route({
-        origin: document.getElementById('start').value,
+        origin: this.coordinates,
         destination: x.userPosition,
         travelMode: 'DRIVING'
       }, function(response, status) {
@@ -176,7 +177,7 @@ export class MainPage {
         stepDisplay.open(map, marker);
       });
     }
-    addMarker(){
+addMarker(){
       let marker = new google.maps.Marker({
         map: this.map,
         animation: google.maps.Animation.DROP,
@@ -184,7 +185,7 @@ export class MainPage {
       });
       let content = "<h4>Information..</h4>";        
       this.addInfoWindow(marker, content);
-    }
+}
     
     addInfoWindow(marker, content){
       let infoWindow = new google.maps.InfoWindow({
@@ -248,47 +249,54 @@ trackNani(){
     findNani() {
       let that=this;
       this.geolocation.getCurrentPosition().then(position => {
-            let location = new google.maps.LatLng(
-              position.coords.latitude,
-              position.coords.longitude
-            );
-            console.log("anaaaaaa", position.coords.latitude,position.coords.longitude)
-            let nani=that.nani;
-            console.log("find", nani)
-            let result = {};
-            let min = 0;
-            let userLat = position.coords.latitude;
-            let userlng = position.coords.longitude;
-            let distance;
-            for(var key in nani){
-              var R = 6371; // Radius of the earth in km
-              var dLat = (Math.PI/180)*(userLat-nani[key].lat);  // deg2rad below
-              var dLon = (Math.PI/180)*(userlng-nani[key].lng); 
-              var a = 
-              Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos((Math.PI/180)*(nani[key].lat)) * Math.cos((Math.PI/180)*(userLat)) * 
-              Math.sin(dLon/2) * Math.sin(dLon/2); 
-              var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-              distance = R * c; // Distance in km
-              result[key]=distance;
-              console.log("distance",distance, result)
-            }
-            let arrayKeys = Object.keys(result)
+              let location = new google.maps.LatLng(
+                position.coords.latitude,
+                position.coords.longitude
+              );
+              console.log("anaaaaaa", position.coords.latitude,position.coords.longitude)
+              let nani=that.nani;
+              console.log("find", nani)
+              let result = {};
+              let min = 0;
+              let userLat = position.coords.latitude;
+              let userlng = position.coords.longitude;
+              let distance;
+                for(var key in nani){
+                  console.log("key:          ",nani[key].available)
+                  if(nani[key].available){
+                  var R = 6371; // Radius of the earth in km
+                  var dLat = (Math.PI/180)*(userLat-nani[key].lat);  // deg2rad below
+                  var dLon = (Math.PI/180)*(userlng-nani[key].lng); 
+                  var a = 
+                  Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos((Math.PI/180)*(nani[key].lat)) * Math.cos((Math.PI/180)*(userLat)) * 
+                  Math.sin(dLon/2) * Math.sin(dLon/2); 
+                  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+                  distance = R * c; // Distance in km
+                  result[key]=distance;
+                  console.log("distance",distance, result)
+                  }
+                }
+                  let arrayKeys = Object.keys(result)
 
-            let firstKey = arrayKeys[0]
-            min = result[firstKey] 
-            for(var key in result){
-              if(result[key]<min){
-                min = result[key];
-              }
-            }
-            for(var key in result){
-              if(result[key]===min){
-                let name = key
-              }
-            }
-            console.log(name, min);
-          alert("The nearst nani:" + " " + name + " " + "It is" + " " + Math.floor(min*10)+ " km" +" "+ "far from you");
+                  let firstKey = arrayKeys[0]
+                  min = result[firstKey] 
+                    for(var key in result){
+                      if(result[key]<min){
+                        min = result[key];
+                      }
+                    }
+                      for(var key in result){
+                        if(result[key]===min){
+                          let name = key
+                        }
+                      }
+                       console.log(nani[name].lat, nani[name].lng, min);
+                       this.coordinates={   lat : nani[name].lat,
+                          lng : nani[name].lng
+                       }
+                        alert("The nearst nani:" + " " + name + " " + "It is" + " " + Math.floor(min*10)+ " km" +" "+ "far from you");
+                        
           })
         }
 
