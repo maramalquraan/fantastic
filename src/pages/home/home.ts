@@ -58,6 +58,7 @@ export class HomePage {
     firebase.auth().signInWithRedirect(provider).then(()=>{
       firebase.auth().getRedirectResult().then((result)=>{
         alert(JSON.stringify(result));
+        console.log("facebookm",result)
       }).catch(function(error){
         alert(JSON.stringify(error))
       });
