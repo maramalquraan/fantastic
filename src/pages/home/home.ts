@@ -24,24 +24,16 @@ export class HomePage {
     public navCtrl: NavController,
     public db: AngularFireDatabase) {
     db.object('nani').valueChanges().subscribe(data => {
-      console.log(data)
+      // console.log(data)
       this.nani = data;
     });
-    // this.nani.snapshotChanges().subscribe(action => {
-    //   // console.log(action.type);
-    //   // console.log(action.key)
-    //   console.log(action.payload.val())
-    // });
-  }
+    }
 
   ionViewDidLoad() {
     setTimeout(() => this.splash = false, 4000);
   }
   login(user: User) {
     console.log("debuggg",user)
-    // if(Error){
-    //   alert(Error)
-    // }
       let x = this
       this.afAuth.auth.signInWithEmailAndPassword(user.email, user.password).then(function () {
         var Uuser = x.afAuth.auth.currentUser;
@@ -66,6 +58,7 @@ export class HomePage {
     firebase.auth().signInWithRedirect(provider).then(()=>{
       firebase.auth().getRedirectResult().then((result)=>{
         alert(JSON.stringify(result));
+        console.log("facebookm",result)
       }).catch(function(error){
         alert(JSON.stringify(error))
       });

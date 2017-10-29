@@ -1,14 +1,14 @@
 <div id="custom-overlay" [style.display]="splash ? 'flex': 'none'">
     <div class="flb">
       <div class="Aligner-item Aligner-item--top"></div>
-      <img src="assets/logo.svg">
+      <img src="assets/splash.gif">
       <div class="Aligner-item Aligner-item--bottom"></div>
     </div>
   </div>
-  
 
 
 <ion-content padding>
+<ion-toggle [(ngModel)]="toggleStatus" pulsado checked="false" (ionChange)="trackNani()">  </ion-toggle>
 <button ion-button (click)="loadSideMenu()"><ion-icon name="list" ion-icon></ion-icon></button>
 <ion-buttons end>
     <button ion-button (click)="addMarker()"><ion-icon name="add"></ion-icon>Add Marker</button>
@@ -37,10 +37,17 @@
         </select>-->
         </div> 
 
-<div #map id="map">
+<div #map id="map" >
     
 </div>
 <div id="warnings-panel"></div>
-
+<div class="bottom request-controls" >
+  <ion-row>
+      <ion-col width-50>
+          <button [hidden]="isRequested" block primary (click)="request()" > Request Nani</button>
+          <button id="cancel" [hidden]="!isRequested || isCanceled" block primary (click)="cancel()" > Cancel Request </button>
+      </ion-col>
+  </ion-row>
+</div>
 
 </ion-content>

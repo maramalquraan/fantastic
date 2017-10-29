@@ -10,6 +10,15 @@
   <ion-card>
     <ion-card-content>
       <ion-list>
+          <ion-item>         
+              <ion-input type="text" [(ngModel)]="user.firstName" placeholder="First Name" ></ion-input>
+            </ion-item>
+            <ion-item>         
+                <ion-input type="text" [(ngModel)]="user.lastName" placeholder="Last Name" ></ion-input>
+              </ion-item>
+              <ion-item>         
+                  <ion-input type="number" [(ngModel)]="user.phoneNumber" placeholder="Phone Number" ></ion-input>
+                </ion-item>
         <ion-item>         
           <ion-input type="text" [(ngModel)]="user.email" placeholder="Email" ></ion-input>
         </ion-item>
