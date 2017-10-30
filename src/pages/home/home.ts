@@ -5,6 +5,7 @@ import { MainPage } from "../main/main";
 import { User } from "../../models/user"
 import { AngularFireAuth } from "angularfire2/auth"
 import { AngularFireDatabase } from "angularfire2/database";
+import { Facebook } from '@ionic-native/facebook';
 import firebase from 'firebase';
 // import { Observable } from 'rxjs/Observable';
 
@@ -19,10 +20,14 @@ export class HomePage {
 
   user = {} as User;
   nani;
+  token;
+  fbuser;
+
 
   constructor(public afAuth: AngularFireAuth,
     public navCtrl: NavController,
-    public db: AngularFireDatabase) {
+    public db: AngularFireDatabase,
+    public facebook : Facebook) {
     db.object('nani').valueChanges().subscribe(data => {
       console.log(data)
       this.nani = data;
@@ -53,24 +58,53 @@ export class HomePage {
           alert("you are not vertified please go to you email"+ user.email +"to vertify you account")
         }
       }).catch(function (error) {
-        var errorCode = error.code;
+        // var errorCode = error.code;
         var errorMessage = error.message;
         console.log("we are inside login error ")
         alert(errorMessage)
       });
   }
 
-  loginWithFB(){
-    let provider = new firebase.auth.FacebookAuthProvider();
+  // loginWithFB(){
+  //   let x = this;
+  //   let provider = new firebase.auth.FacebookAuthProvider();
+  //   console.log("HELLO")
+  //   firebase.auth().signInWithPopup(provider).then(function(){
+  //   // .then(()=>{
+  //   //   firebase.auth().getRedirectResult().then((result)=>{
+  //   //     console.log("HI")
+  //   //     alert(JSON.stringify(result));
+  //   //   }).catch(function(error){
+  //   //     alert(JSON.stringify(error))
+  //   //   });
+  //   // })
+  //   firebase.auth().getRedirectResult().then(function(result) {
+  //     if (result.credential) {
+  //       // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+  //       x.token = result.credential.accessToken;
+  //       alert(x.token)
+  //       // ...
+  //     }
+  //     // The signed-in user info.
+  //     x.fbuser = result.user;
+  //     alert(x.fbuser)
+  //   }).catch(function(error) {
+  //     // Handle Errors here.
+  //     var errorCode = error.code;
+  //     var errorMessage = error.message;
+  //     // The email of the user's account used.
+  //     var email = error.email;
+  //     // The firebase.auth.AuthCredential type that was used.
+  //     var credential = error.credential;
+  //     // ...
+  //   });
+  // })
+  // }
 
-    firebase.auth().signInWithRedirect(provider).then(()=>{
-      firebase.auth().getRedirectResult().then((result)=>{
-        alert(JSON.stringify(result));
-      }).catch(function(error){
-        alert(JSON.stringify(error))
-      });
-    })
-  }
+  // showUserFB (){
+  //   console.log(this.fbuser);
+  //   console.log(this.token)
+  // }
 
   // async login (user: User){
 
@@ -91,6 +125,25 @@ export class HomePage {
   //     // console.error(e)
   //   }
   // }
+
+  loginWithFB () {
+    this.facebook.login(['email']).then( (response) => {
+      const facebookCredential = firebase.auth.FacebookAuthProvider
+          .credential(response.authResponse.accessToken);
+
+      firebase.auth().signInWithCredential(facebookCredential)
+      .then((success) => {
+          alert("Firebase success: " + JSON.stringify(success));
+          this.fbuser = success;
+      })
+      .catch((error) => {
+          console.log("Firebase failure: " + JSON.stringify(error));
+      });
+
+    }).catch((error) => { console.log(error) });
+  }
+
+
   loadSignUp() {
     this.navCtrl.push(SignUpPage);
   }

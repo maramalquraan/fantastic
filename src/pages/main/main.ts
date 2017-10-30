@@ -12,7 +12,7 @@ import { AngularFireDatabase } from "angularfire2/database";
 * Ionic pages and navigation.
 */
 declare var google: any;
-let position;
+// let position;
 
 @IonicPage()
 
@@ -41,7 +41,7 @@ export class MainPage {
   userPosition;
   ionViewDidLoad() {
     this.initMap();
-    this.findNani();
+    // this.findNani();
     console.log('ionViewDidLoad MainPage');
   }
  
@@ -116,14 +116,14 @@ export class MainPage {
       // document.getElementById('end').addEventListener('change', onChangeHandler);
       //duration code
       
-      var bounds = new google.maps.LatLngBounds;
+      // var bounds = new google.maps.LatLngBounds;
       // var destination = 'Yaser Mall';
       // var origin = 'Mecca Mall';
       // var origin = {lat: 31.977285, lng: 35.843623};
       // var destination = {lat: 31.955330, lng: 35.834616};
-      var origin = document.getElementById('start').value;
+      var origin ={lat: 31.955330, lng: 35.834616};
       var destination = x.userPosition;
-      var geocoder = new google.maps.Geocoder;
+      // var geocoder = new google.maps.Geocoder;
       var service = new google.maps.DistanceMatrixService;
       service.getDistanceMatrix({
         origins: [origin],
@@ -158,7 +158,7 @@ export class MainPage {
         markerArray[i].setMap(null);
       }
       directionsService.route({
-        origin: document.getElementById('start').value,
+        origin: {lat: 31.955330, lng: 35.834616},
         destination: x.userPosition,
         travelMode: 'DRIVING'
       }, function(response, status) {
@@ -209,46 +209,46 @@ export class MainPage {
         infoWindow.open(this.map, marker);
       });
     }
-    findNani() {
-      this.geolocation.getCurrentPosition().then(position => {
-            let location = new google.maps.LatLng(
-              position.coords.latitude,
-              position.coords.longitude
-            );
+    // findNani() {
+    //   this.geolocation.getCurrentPosition().then(position => {
+    //         // let location = new google.maps.LatLng(
+    //         //   position.coords.latitude,
+    //         //   position.coords.longitude
+    //         // );
             
-            let nani=this.nani;
-            let result = {};
-            let min = 0;
-            let userLat = position.coords.latitude;
-            let userlng = position.coords.longitude;
-            let distance;
-            for(var key in nani){
-              distance= ((userLat-nani[key].lat)**2+(userlng-nani[key].lng)**2)**0.5;
-              result[nani[key].firstName]=distance;
-            }
-            let arrayKeys = Object.keys(result)
-            let firstKey = arrayKeys[0]
-            min = result[firstKey] 
-            for(var key in result){
-              if(result[key]<min){
-                min = result[key];
-              }
-            }
-            for(var key in result){
-              if(result[key]===min){
-                let name = key
-              }
-            }
-            console.log(name, min);
-          alert("The nearst nani:" + " " + name + " " + "It is" + " " + Math.floor(min*10)+ " km" +" "+ "far from you");
-          });
-        }
+    //         let nani=this.nani;
+    //         let result = {};
+    //         let min = 0;
+    //         let userLat = position.coords.latitude;
+    //         let userlng = position.coords.longitude;
+    //         let distance;
+    //         for(var key in nani){
+    //           distance= ((userLat-nani[key].lat)**2+(userlng-nani[key].lng)**2)**0.5;
+    //           result[nani[key].firstName]=distance;
+    //         }
+    //         let arrayKeys = Object.keys(result)
+    //         let firstKey = arrayKeys[0]
+    //         min = result[firstKey] 
+    //         for(var key3 in result){
+    //           if(result[key3]<min){
+    //             min = result[key3];
+    //           }
+    //         }
+    //         for(var key2 in result){
+    //           if(result[key2]===min){
+    //             let name = key2
+    //           }
+    //         }
+    //         console.log(name, min);
+    //       alert("The nearst nani:" + " " + name + " " + "It is" + " " + Math.floor(min*10)+ " km" +" "+ "far from you");
+    //       });
+    //     }
 
 
       
   
   request() {
-    this.findNani();
+    // this.findNani();
     this.isRequested = true;
     
   }
