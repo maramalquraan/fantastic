@@ -15,7 +15,7 @@ import firebase from 'firebase';
 * Ionic pages and navigation.
 */
 declare var google: any;
-let position;
+// let position;
 
 @IonicPage()
 
@@ -51,7 +51,7 @@ export class MainPage {
 
   ionViewDidLoad() {
     this.initMap();
-  setTimeout(() => this.splash = false, 3000);
+    setTimeout(() => this.splash = false, 3000);
   }
  
  loadSideMenu(){
@@ -102,14 +102,14 @@ export class MainPage {
       // document.getElementById('end').addEventListener('change', onChangeHandler);
       //duration code
       
-      var bounds = new google.maps.LatLngBounds;
+      // var bounds = new google.maps.LatLngBounds;
       // var destination = 'Yaser Mall';
       // var origin = 'Mecca Mall';
       // var origin = {lat: 31.977285, lng: 35.843623};
       // var destination = {lat: 31.955330, lng: 35.834616};
       var origin = this.coordinates;
       var destination = x.userPosition;
-      var geocoder = new google.maps.Geocoder;
+      // var geocoder = new google.maps.Geocoder;
       var service = new google.maps.DistanceMatrixService;
       service.getDistanceMatrix({
         origins: [origin],
@@ -243,7 +243,6 @@ trackNani(){
     var db = firebase.database();    
     db.ref("nani/"+Uuser.uid).update({ available : false});
   }
-
 }
 
     findNani() {
