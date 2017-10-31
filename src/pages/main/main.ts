@@ -47,12 +47,18 @@ export class MainPage {
   }
  
 
- loadSideMenu(){
+ Logout(){
   this.afAuth.auth.signOut()  
   this.navCtrl.setRoot(HomePage)
    console.log("clicked");
  }
+openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
+}
 
+closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+}
   
 
   initMap() {
@@ -258,4 +264,4 @@ export class MainPage {
       alert("The nearst nani:" + " " + name + " " + "It is" + " " + Math.floor(min*10)+ " km" +" "+ "far from you");
       });
     }
-}
+  }
