@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { User } from "../../models/user"
+import { User } from "../../models/user";
 import { AngularFireAuth } from "angularfire2/auth"
 import { HomePage } from "../home/home";
 import { MainPage } from "../main/main";
+import firebase from 'firebase';
 
 @IonicPage()
 @Component({
@@ -14,7 +15,9 @@ export class SignUpPage {
   user = {} as User;
   constructor(public afAuth: AngularFireAuth,
     public navCtrl: NavController, public navParams: NavParams) {
+      let database=firebase.database();      
   }
+  
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SignUpPage');
@@ -31,7 +34,8 @@ export class SignUpPage {
       alert(e.message)
     }
     var Uuser = this.afAuth.auth.currentUser;
-
+    firebase.database().ref('users/' + Uuser.uid).set(user);
+    
     Uuser.sendEmailVerification().then(function () {
       console.log("Email sent..................")
     }).catch(function (error) {
@@ -39,5 +43,7 @@ export class SignUpPage {
 
     });
   }
+
+  
 
 }
