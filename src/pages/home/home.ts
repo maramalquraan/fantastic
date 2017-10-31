@@ -29,24 +29,17 @@ export class HomePage {
     public db: AngularFireDatabase,
     public facebook : Facebook) {
     db.object('nani').valueChanges().subscribe(data => {
-      console.log(data)
+      // console.log(data)
       this.nani = data;
     });
-    // this.nani.snapshotChanges().subscribe(action => {
-    //   // console.log(action.type);
-    //   // console.log(action.key)
-    //   console.log(action.payload.val())
-    // });
-  }
+    }
 
   ionViewDidLoad() {
     setTimeout(() => this.splash = false, 4000);
   }
+  
   login(user: User) {
     console.log("debuggg",user)
-    // if(Error){
-    //   alert(Error)
-    // }
       let x = this
       this.afAuth.auth.signInWithEmailAndPassword(user.email, user.password).then(function () {
         var Uuser = x.afAuth.auth.currentUser;
@@ -64,47 +57,6 @@ export class HomePage {
         alert(errorMessage)
       });
   }
-
-  // loginWithFB(){
-  //   let x = this;
-  //   let provider = new firebase.auth.FacebookAuthProvider();
-  //   console.log("HELLO")
-  //   firebase.auth().signInWithPopup(provider).then(function(){
-  //   // .then(()=>{
-  //   //   firebase.auth().getRedirectResult().then((result)=>{
-  //   //     console.log("HI")
-  //   //     alert(JSON.stringify(result));
-  //   //   }).catch(function(error){
-  //   //     alert(JSON.stringify(error))
-  //   //   });
-  //   // })
-  //   firebase.auth().getRedirectResult().then(function(result) {
-  //     if (result.credential) {
-  //       // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-  //       x.token = result.credential.accessToken;
-  //       alert(x.token)
-  //       // ...
-  //     }
-  //     // The signed-in user info.
-  //     x.fbuser = result.user;
-  //     alert(x.fbuser)
-  //   }).catch(function(error) {
-  //     // Handle Errors here.
-  //     var errorCode = error.code;
-  //     var errorMessage = error.message;
-  //     // The email of the user's account used.
-  //     var email = error.email;
-  //     // The firebase.auth.AuthCredential type that was used.
-  //     var credential = error.credential;
-  //     // ...
-  //   });
-  // })
-  // }
-
-  // showUserFB (){
-  //   console.log(this.fbuser);
-  //   console.log(this.token)
-  // }
 
   // async login (user: User){
 

@@ -6,52 +6,50 @@ page-main {
         height: 100%;
         width: 100%;
     }
-
-#custom-overlay {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 100000;
-    width:100%;
-    background-color: #002a3e;
-  }
-  
-  .flb {
-    background-color: #3ebffb;
-    height:100%;
-    width:100%;
-    animation: pulse 1s linear forwards;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .Aligner-item {
-    max-width: 50%;
-  }
-  .Aligner-item--top {
-    align-self: flex-start;
-  }
-  .Aligner-item--bottom {
-    align-self: flex-end;
-  }
-  #custom-overlay img {
-    display: block;
-    margin: 0 auto;
-    width: 50%;
-    height: auto;
-    animation: animation 3100ms linear infinite both;
-    animation-delay: 1s;
-  }
-
-
-  @keyframes pulse {
-    0% {
-      opacity:0;
+    #mySidenav{
+        font-family: "Lato", sans-serif;
     }
-    100% {
-      opacity:1;
+    
+    .sidenav {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #111;
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
     }
-  }
+    
+    .sidenav a {
+        padding: 8px 8px 8px 32px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block;
+        transition: 0.3s;
+    }
+    
+    .sidenav a:hover {
+        color: #f1f1f1;
+    }
+    
+    .sidenav .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+    }
+    
+    @media screen and (max-height: 450px) {
+      .sidenav {padding-top: 15px;}
+      .sidenav a {font-size: 18px;}
+    }
+
+
+
 }
+

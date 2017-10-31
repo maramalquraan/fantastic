@@ -4,6 +4,9 @@ import { AngularFireAuth } from 'angularfire2/auth'
 import { Geolocation } from '@ionic-native/geolocation';
 import { HomePage } from "../home/home";
 import { AngularFireDatabase } from "angularfire2/database";
+import { User } from "../../models/user";
+import firebase from 'firebase';
+
 
 /**
 * Generated class for the MainPage page.
@@ -23,40 +26,51 @@ declare var google: any;
 
 export class MainPage {
   @ViewChild('map') mapElement:ElementRef;
+  splash=true;
   map: any;
+  user = {} as User;  
   nani;
+  coordinates = {};
+  nanies;
 
   public isRequested: boolean;
   public isCanceled: boolean;
- 
-  constructor( private afAuth : AngularFireAuth, private toast: ToastController,
+  public toggleStatus: boolean;
+  constructor( private afAuth : AngularFireAuth, private toast: ToastController, 
     public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation,  public db: AngularFireDatabase ) {
       this.isRequested = false;
       this.isCanceled= false;
+      this.toggleStatus=false;
+      let database=firebase.database();
       db.object('nani').valueChanges().subscribe(data => {
         this.nani= data;
    });
   }
   
   userPosition;
+
   ionViewDidLoad() {
     this.initMap();
-    // this.findNani();
-    console.log('ionViewDidLoad MainPage');
+    setTimeout(() => this.splash = false, 3000);
   }
- 
- loadSideMenu(){
+
+ Logout(){
   this.afAuth.auth.signOut()  
   this.navCtrl.setRoot(HomePage)
-   console.log("clicked");
  }
-  
+
+openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
+}
+
+closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+}
+
   initMap() {
     let x = this;
     this.geolocation.getCurrentPosition().then((position) => {
-      // console.log(position)
       x.userPosition = {lat: position.coords.latitude, lng: position.coords.longitude}
-      console.log(x.userPosition)
       let location = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
       this.map = new google.maps.Map(document.getElementById('map'), {
         zoom: 15,
@@ -80,27 +94,7 @@ export class MainPage {
       }
     });
   }
- ////////////////////////////////////////////////
-//  addpolyLine(){
-     
-//     let flightPlanCoordinates = [
-//       {lat: 30.1866316, lng: 36.1376679 },
-//       {lat: 28.1866316, lng: 31.1376679 },
-//       {lat: 31.963158, lng: 35.930359 },
-//       {lat: 28.9866316, lng: 31.8376679 },
-//       {lat: 38.1866316, lng: 27.1376679 },
-//       {lat: 23.1966316, lng: 31.1378679 }
-//     ];
-    
-//     let flightPath = new google.maps.Polyline({
-//       path: flightPlanCoordinates,
-//       geodesic: true,
-//       strokeColor: '#FF0000',
-//       strokeOpacity: 1.0,
-//       strokeWeight: 2
-//     });
-//     flightPath.setMap(this.map);
-//   }
+ 
     showDirectionAndDuration(){
       //direction code
       let x = this;
@@ -121,7 +115,7 @@ export class MainPage {
       // var origin = 'Mecca Mall';
       // var origin = {lat: 31.977285, lng: 35.843623};
       // var destination = {lat: 31.955330, lng: 35.834616};
-      var origin ={lat: 31.955330, lng: 35.834616};
+      var origin = this.coordinates;
       var destination = x.userPosition;
       // var geocoder = new google.maps.Geocoder;
       var service = new google.maps.DistanceMatrixService;
@@ -158,7 +152,7 @@ export class MainPage {
         markerArray[i].setMap(null);
       }
       directionsService.route({
-        origin: {lat: 31.955330, lng: 35.834616},
+        origin: this.coordinates,
         destination: x.userPosition,
         travelMode: 'DRIVING'
       }, function(response, status) {
@@ -191,7 +185,7 @@ export class MainPage {
         stepDisplay.open(map, marker);
       });
     }
-    addMarker(){
+addMarker(){
       let marker = new google.maps.Marker({
         map: this.map,
         animation: google.maps.Animation.DROP,
@@ -199,7 +193,7 @@ export class MainPage {
       });
       let content = "<h4>Information..</h4>";        
       this.addInfoWindow(marker, content);
-    }
+}
     
     addInfoWindow(marker, content){
       let infoWindow = new google.maps.InfoWindow({
@@ -207,51 +201,117 @@ export class MainPage {
       });
       google.maps.event.addListener(marker, 'click', () => {
         infoWindow.open(this.map, marker);
-      });
-    }
-    // findNani() {
-    //   this.geolocation.getCurrentPosition().then(position => {
-    //         // let location = new google.maps.LatLng(
-    //         //   position.coords.latitude,
-    //         //   position.coords.longitude
-    //         // );
-            
-    //         let nani=this.nani;
-    //         let result = {};
-    //         let min = 0;
-    //         let userLat = position.coords.latitude;
-    //         let userlng = position.coords.longitude;
-    //         let distance;
-    //         for(var key in nani){
-    //           distance= ((userLat-nani[key].lat)**2+(userlng-nani[key].lng)**2)**0.5;
-    //           result[nani[key].firstName]=distance;
-    //         }
-    //         let arrayKeys = Object.keys(result)
-    //         let firstKey = arrayKeys[0]
-    //         min = result[firstKey] 
-    //         for(var key3 in result){
-    //           if(result[key3]<min){
-    //             min = result[key3];
-    //           }
-    //         }
-    //         for(var key2 in result){
-    //           if(result[key2]===min){
-    //             let name = key2
-    //           }
-    //         }
-    //         console.log(name, min);
-    //       alert("The nearst nani:" + " " + name + " " + "It is" + " " + Math.floor(min*10)+ " km" +" "+ "far from you");
-    //       });
-    //     }
+      })
+    };
 
 
+    
+trackNani(){
+  console.log("initial toggle state", this.toggleStatus ) 
+  // var db = firebase.database();    
+  // db.ref("nani/YdSV2gxkYoO84TtnOoOjBauEJB33").update({ ava}); 
+  if(this.toggleStatus === true){        
+        console.log("start tracking")
+        let flag= false;
+        console.log("<<<<", this.nani)
+        let naniesFix=this.nani;
+        var Uuser = this.afAuth.auth.currentUser; 
+        console.log("nnnnn", naniesFix, Uuser.uid);    
+        for(var key in naniesFix){
+          if(key===Uuser.uid){
+            flag=true;
+            console.log("flag true")
+            var db = firebase.database();    
+            db.ref("nani/"+Uuser.uid).update({ available : true});
+          }
+        }
+    let that = this
+    if(flag===true){
+      var intervalFunc = setInterval(function timer() {
+          that.geolocation.getCurrentPosition().then(position => {
+            let location = new google.maps.LatLng(
+              position.coords.latitude,
+              position.coords.longitude
+            );
+            let naniLat = position.coords.latitude;
+            let nanilng = position.coords.longitude;
+              console.log("hereeeee",naniLat,nanilng,Uuser.uid)
+              var db = firebase.database();    
+              db.ref("nani/"+Uuser.uid).update({ lat: naniLat, lng:nanilng});
+              console.log("vvvvvv",Uuser.uid,naniLat,nanilng)
+              
+          })
       
+        }, 1000); 
+    }
+  }else{
+    console.log("inside false")
+    clearInterval(intervalFunc)
+    var Uuser = this.afAuth.auth.currentUser;     
+    var db = firebase.database();    
+    db.ref("nani/"+Uuser.uid).update({ available : false});
+  }
+}
+
+    findNani() {
+      let that=this;
+      this.geolocation.getCurrentPosition().then(position => {
+              let location = new google.maps.LatLng(
+                position.coords.latitude,
+                position.coords.longitude
+              );
+              console.log("anaaaaaa", position.coords.latitude,position.coords.longitude)
+              let nani=that.nani;
+              console.log("find", nani)
+              let result = {};
+              let min = 0;
+              let userLat = position.coords.latitude;
+              let userlng = position.coords.longitude;
+              let distance;
+                for(var key in nani){
+                  console.log("key:          ",nani[key].available)
+                  if(nani[key].available){
+                  var R = 6371; // Radius of the earth in km
+                  var dLat = (Math.PI/180)*(userLat-nani[key].lat);  // deg2rad below
+                  var dLon = (Math.PI/180)*(userlng-nani[key].lng); 
+                  var a = 
+                  Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos((Math.PI/180)*(nani[key].lat)) * Math.cos((Math.PI/180)*(userLat)) * 
+                  Math.sin(dLon/2) * Math.sin(dLon/2); 
+                  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+                  distance = R * c; // Distance in km
+                  result[key]=distance;
+                  console.log("distance",distance, result)
+                  }
+                }
+                  let arrayKeys = Object.keys(result)
+
+                  let firstKey = arrayKeys[0]
+                  min = result[firstKey] 
+                    for(var key in result){
+                      if(result[key]<min){
+                        min = result[key];
+                      }
+                    }
+                      for(var key in result){
+                        if(result[key]===min){
+                          let name = key
+                        }
+                      }
+                       console.log(nani[name].lat, nani[name].lng, min);
+                       this.coordinates={   lat : nani[name].lat,
+                          lng : nani[name].lng
+                       }
+                        alert("The nearst nani:" + " " + name + " " + "It is" + " " + Math.floor(min*10)+ " km" +" "+ "far from you");
+                        
+          })
+        }
   
   request() {
-    // this.findNani();
+    this.findNani();
     this.isRequested = true;
     
-  }
+  };
 
   cancel(){
     this.isRequested = false;
@@ -260,5 +320,5 @@ export class MainPage {
        that.isCanceled=true;
        alert('time is done')
       }
-      setTimeout(delay, 60000);   } 
+      setTimeout(delay, 60000)  };
 }

@@ -1,18 +1,17 @@
-<div id="custom-overlay" [style.display]="splash ? 'flex': 'none'">
-    <div class="flb">
-      <div class="Aligner-item Aligner-item--top"></div>
-      <img src="assets/logo.svg">
-      <div class="Aligner-item Aligner-item--bottom"></div>
+<<<<<<< HEAD
+<ion-header>
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" (click)="closeNav()">&times;</a>
+        <a href="#" (click)="Logout()">Logout</a>
     </div>
-  </div>
-  
+    <span style="font-size:30px;cursor:pointer" (click)="openNav()">&#9776;</span>
+</ion-header>
 
+<ion-content padding>  
+    
+<ion-toggle [(ngModel)]="toggleStatus" pulsado checked="false" (ionChange)="trackNani()">  </ion-toggle>
 
-<ion-content padding>
-<button ion-button (click)="loadSideMenu()"><ion-icon name="list" ion-icon></ion-icon></button>
-<ion-buttons end>
     <button ion-button (click)="addMarker()"><ion-icon name="add"></ion-icon>Add Marker</button>
-</ion-buttons>
 <ion-buttons>
     <button ion-button (click)="findNani()"><ion-icon name="add"></ion-icon>Find Nani</button>
 </ion-buttons>
@@ -37,7 +36,7 @@
         </select>-->
         </div> 
 
-<div #map id="map">
+<div #map id="map" >
     
 </div>
 <div id="warnings-panel"></div>
@@ -51,3 +50,15 @@
 </div>
 
 </ion-content>
+
+
+
+        
+           
+            
+            
+            
+           
+            
+            
+            
