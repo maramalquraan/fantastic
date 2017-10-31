@@ -54,10 +54,25 @@ export class MainPage {
     setTimeout(() => this.splash = false, 3000);
   }
  
+<<<<<<< HEAD
+
+ Logout(){
+=======
  loadSideMenu(){
+>>>>>>> refs/remotes/origin/master
   this.afAuth.auth.signOut()  
   this.navCtrl.setRoot(HomePage)
  }
+<<<<<<< HEAD
+openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
+}
+
+closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+}
+=======
+>>>>>>> refs/remotes/origin/master
   
   initMap() {
     let x = this;
@@ -298,6 +313,13 @@ trackNani(){
                         
           })
         }
+<<<<<<< HEAD
+        console.log(name, min);
+      alert("The nearst nani:" + " " + name + " " + "It is" + " " + Math.floor(min*10)+ " km" +" "+ "far from you");
+      });
+    }
+  }
+=======
 
   
       
@@ -317,3 +339,4 @@ trackNani(){
       }
       setTimeout(delay, 60000)  };
 }
+>>>>>>> refs/remotes/origin/master
