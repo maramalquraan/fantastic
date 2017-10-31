@@ -7,26 +7,10 @@
     <span style="font-size:30px;cursor:pointer" (click)="openNav()">&#9776;</span>
 </ion-header>
 
-
-<ion-content padding>
-
-
-        
-=======
-<div id="custom-overlay" [style.display]="splash ? 'flex': 'none'">
-    <div class="flb">
-      <div class="Aligner-item Aligner-item--top"></div>
-      <img src="assets/splash.gif">
-      <div class="Aligner-item Aligner-item--bottom"></div>
-    </div>
-  </div>
-
-
-<ion-content padding>
+<ion-content padding>  
+    
 <ion-toggle [(ngModel)]="toggleStatus" pulsado checked="false" (ionChange)="trackNani()">  </ion-toggle>
-<button ion-button (click)="loadSideMenu()"><ion-icon name="list" ion-icon></ion-icon></button>
-<ion-buttons end>
->>>>>>> refs/remotes/origin/master
+
     <button ion-button (click)="addMarker()"><ion-icon name="add"></ion-icon>Add Marker</button>
 <ion-buttons>
     <button ion-button (click)="findNani()"><ion-icon name="add"></ion-icon>Find Nani</button>
