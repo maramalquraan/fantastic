@@ -106,7 +106,7 @@ closeNav() {
       var onChangeHandler = function() {
         x.calculateAndDisplayRoute(directionsDisplay, directionsService, markerArray, stepDisplay, this.map);
       };
-      document.getElementById('start').addEventListener('change', onChangeHandler);
+      // document.getElementById('start').addEventListener('change', onChangeHandler);
       // document.getElementById('end').addEventListener('change', onChangeHandler);
       //duration code
       
@@ -116,6 +116,9 @@ closeNav() {
       // var origin = {lat: 31.977285, lng: 35.843623};
       // var destination = {lat: 31.955330, lng: 35.834616};
       var origin = this.coordinates;
+      x.geolocation.getCurrentPosition().then(position => {
+        x.userPosition = {lat: position.coords.latitude, lng: position.coords.longitude}
+      });
       var destination = x.userPosition;
       // var geocoder = new google.maps.Geocoder;
       var service = new google.maps.DistanceMatrixService;
@@ -253,59 +256,65 @@ trackNani(){
   }
 }
 
-    findNani() {
-      let that=this;
-      this.geolocation.getCurrentPosition().then(position => {
-              let location = new google.maps.LatLng(
-                position.coords.latitude,
-                position.coords.longitude
-              );
-              console.log("anaaaaaa", position.coords.latitude,position.coords.longitude)
-              let nani=that.nani;
-              console.log("find", nani)
-              let result = {};
-              let min = 0;
-              let userLat = position.coords.latitude;
-              let userlng = position.coords.longitude;
-              let distance;
-                for(var key in nani){
-                  console.log("key:          ",nani[key].available)
-                  if(nani[key].available){
-                  var R = 6371; // Radius of the earth in km
-                  var dLat = (Math.PI/180)*(userLat-nani[key].lat);  // deg2rad below
-                  var dLon = (Math.PI/180)*(userlng-nani[key].lng); 
-                  var a = 
-                  Math.sin(dLat/2) * Math.sin(dLat/2) +
-                  Math.cos((Math.PI/180)*(nani[key].lat)) * Math.cos((Math.PI/180)*(userLat)) * 
-                  Math.sin(dLon/2) * Math.sin(dLon/2); 
-                  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-                  distance = R * c; // Distance in km
-                  result[key]=distance;
-                  console.log("distance",distance, result)
-                  }
-                }
-                  let arrayKeys = Object.keys(result)
-
-                  let firstKey = arrayKeys[0]
-                  min = result[firstKey] 
-                    for(var key in result){
-                      if(result[key]<min){
-                        min = result[key];
-                      }
+findNani() {
+  
+        let that=this;
+        this.geolocation.getCurrentPosition().then(position => {
+                let location = new google.maps.LatLng(
+                  position.coords.latitude,
+                  position.coords.longitude
+                );
+                console.log("anaaaaaa", position.coords.latitude,position.coords.longitude)
+                let nani=that.nani;
+                console.log("find", nani)
+                let result = {};
+                let min = 0;
+                let userLat = position.coords.latitude;
+                let userlng = position.coords.longitude;
+                let distance;
+                  for(var key in nani){
+                    console.log("key:          ",nani[key].available)
+                    if(nani[key].available){
+                    var R = 6371; // Radius of the earth in km
+                    var dLat = (Math.PI/180)*(userLat-nani[key].lat);  // deg2rad below
+                    var dLon = (Math.PI/180)*(userlng-nani[key].lng); 
+                    var a = 
+                    Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos((Math.PI/180)*(nani[key].lat)) * Math.cos((Math.PI/180)*(userLat)) * 
+                    Math.sin(dLon/2) * Math.sin(dLon/2); 
+                    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+                    distance = R * c; // Distance in km
+                    result[key]=distance;
+                    console.log("distance",distance, result)
                     }
+                  }
+                    let arrayKeys = Object.keys(result)
+  
+                    let firstKey = arrayKeys[0]
+                    min = result[firstKey] 
                       for(var key in result){
-                        if(result[key]===min){
-                          let name = key
+                        if(result[key]<min){
+                          min = result[key];
                         }
                       }
-                       console.log(nani[name].lat, nani[name].lng, min);
-                       this.coordinates={   lat : nani[name].lat,
-                          lng : nani[name].lng
-                       }
-                        alert("The nearst nani:" + " " + name + " " + "It is" + " " + Math.floor(min*10)+ " km" +" "+ "far from you");
-                        
-          })
-        }
+                        for(var key in result){
+                          if(result[key]===min){
+                            let name = key
+                          }
+                        }
+                        // console.log(that.nani[name].lat,"hellooooooooo")
+                        //  console.log(nani[name].lat, nani[name].lng, min);
+                        var intervalFunc = setInterval(function timer() {
+                            that.coordinates={   lat : that.nani[name].lat,
+                              lng : that.nani[name].lng
+                            }                          
+                            that.showDirectionAndDuration();
+                        }, 1000); 
+                         
+                          alert("The nearst nani:" + " " + name + " " + "It is" + " " + Math.floor(min*10)+ " km" +" "+ "far from you");
+                          
+            })
+          }
   
   request() {
     this.findNani();
