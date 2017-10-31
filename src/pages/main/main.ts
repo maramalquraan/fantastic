@@ -3,6 +3,9 @@ import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angu
 import { AngularFireAuth } from 'angularfire2/auth'
 import { Geolocation } from '@ionic-native/geolocation';
 import { HomePage } from "../home/home";
+import { AngularFireDatabase } from "angularfire2/database";
+import { User } from "../../models/user";
+import firebase from 'firebase';
 
 
 /**
@@ -12,19 +15,10 @@ import { HomePage } from "../home/home";
 * Ionic pages and navigation.
 */
 declare var google: any;
-let naniArr = [
-  { name: "marwa", lat: 30.1866316, long: 36.1376679 },
-  { name: "samya", lat: 28.1866316, long: 31.1376679 },
-  // { name: "leen", lat: 31.963158, long: 35.930359 },
-  { name: "sameera", lat: 28.9866316, long: 31.8376679 },
-  { name: "asma", lat: 38.1866316, long: 27.1376679 },
-  { name: "waed", lat: 23.1966316, long: 31.1378679 }
-];
-
-let position;
-
+// let position;
 
 @IonicPage()
+
 @Component({
  selector: 'page-main',
  templateUrl: 'main.html',
@@ -32,35 +26,43 @@ let position;
 
 export class MainPage {
   @ViewChild('map') mapElement:ElementRef;
+  splash=true;
   map: any;
+  user = {} as User;  
+  nani;
+  coordinates = {};
+  nanies;
 
-  constructor( private afAuth : AngularFireAuth, private toast: ToastController,
-    public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation) {
-
+  public isRequested: boolean;
+  public isCanceled: boolean;
+  public toggleStatus: boolean;
+  constructor( private afAuth : AngularFireAuth, private toast: ToastController, 
+    public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation,  public db: AngularFireDatabase ) {
+      this.isRequested = false;
+      this.isCanceled= false;
+      this.toggleStatus=false;
+      let database=firebase.database();
+      db.object('nani').valueChanges().subscribe(data => {
+        this.nani= data;
+   });
   }
+  
   userPosition;
 
   ionViewDidLoad() {
     this.initMap();
-    //  this.findNani();
-    console.log('ionViewDidLoad MainPage');
+    setTimeout(() => this.splash = false, 3000);
   }
  
-
  loadSideMenu(){
   this.afAuth.auth.signOut()  
   this.navCtrl.setRoot(HomePage)
-   console.log("clicked");
  }
-
   
-
   initMap() {
     let x = this;
     this.geolocation.getCurrentPosition().then((position) => {
-      // console.log(position)
       x.userPosition = {lat: position.coords.latitude, lng: position.coords.longitude}
-      console.log(x.userPosition)
       let location = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
       this.map = new google.maps.Map(document.getElementById('map'), {
         zoom: 15,
@@ -69,7 +71,6 @@ export class MainPage {
       });
     })
   }
-
   ionViewWillLoad(){
     this.afAuth.authState.subscribe(data => {
       if(data && data.email){
@@ -85,32 +86,7 @@ export class MainPage {
       }
     });
   }
-
- ////////////////////////////////////////////////
-
-//  addpolyLine(){
-     
-//     let flightPlanCoordinates = [
-//       {lat: 30.1866316, lng: 36.1376679 },
-//       {lat: 28.1866316, lng: 31.1376679 },
-//       {lat: 31.963158, lng: 35.930359 },
-//       {lat: 28.9866316, lng: 31.8376679 },
-//       {lat: 38.1866316, lng: 27.1376679 },
-//       {lat: 23.1966316, lng: 31.1378679 }
-//     ];
-    
-//     let flightPath = new google.maps.Polyline({
-//       path: flightPlanCoordinates,
-//       geodesic: true,
-//       strokeColor: '#FF0000',
-//       strokeOpacity: 1.0,
-//       strokeWeight: 2
-//     });
-
-//     flightPath.setMap(this.map);
-//   }
-
-
+ 
     showDirectionAndDuration(){
       //direction code
       let x = this;
@@ -124,17 +100,16 @@ export class MainPage {
       };
       document.getElementById('start').addEventListener('change', onChangeHandler);
       // document.getElementById('end').addEventListener('change', onChangeHandler);
-
       //duration code
       
-      var bounds = new google.maps.LatLngBounds;
+      // var bounds = new google.maps.LatLngBounds;
       // var destination = 'Yaser Mall';
       // var origin = 'Mecca Mall';
       // var origin = {lat: 31.977285, lng: 35.843623};
       // var destination = {lat: 31.955330, lng: 35.834616};
-      var origin = document.getElementById('start').value;
+      var origin = this.coordinates;
       var destination = x.userPosition;
-      var geocoder = new google.maps.Geocoder;
+      // var geocoder = new google.maps.Geocoder;
       var service = new google.maps.DistanceMatrixService;
       service.getDistanceMatrix({
         origins: [origin],
@@ -163,14 +138,13 @@ export class MainPage {
             }
         });
     }
-
     calculateAndDisplayRoute(directionsDisplay, directionsService, markerArray, stepDisplay, map){
       let x = this;
       for (var i = 0; i < markerArray.length; i++) {
         markerArray[i].setMap(null);
       }
       directionsService.route({
-        origin: document.getElementById('start').value,
+        origin: this.coordinates,
         destination: x.userPosition,
         travelMode: 'DRIVING'
       }, function(response, status) {
@@ -186,7 +160,6 @@ export class MainPage {
         }
       });
     }
-
     showSteps(directionResult, markerArray, stepDisplay, map){
       var myRoute = directionResult.routes[0].legs[0];
       for (var i = 0; i < myRoute.steps.length; i++) {
@@ -196,7 +169,6 @@ export class MainPage {
         this.attachInstructionText(stepDisplay, marker, myRoute.steps[i].instructions, map);
       }
     }
-
     attachInstructionText(stepDisplay, marker, text, map){
       google.maps.event.addListener(marker, 'click', function() {
         // Open an info window when the marker is clicked on, containing the text
@@ -205,8 +177,7 @@ export class MainPage {
         stepDisplay.open(map, marker);
       });
     }
-
-    addMarker(){
+addMarker(){
       let marker = new google.maps.Marker({
         map: this.map,
         animation: google.maps.Animation.DROP,
@@ -214,7 +185,7 @@ export class MainPage {
       });
       let content = "<h4>Information..</h4>";        
       this.addInfoWindow(marker, content);
-    }
+}
     
     addInfoWindow(marker, content){
       let infoWindow = new google.maps.InfoWindow({
@@ -222,40 +193,127 @@ export class MainPage {
       });
       google.maps.event.addListener(marker, 'click', () => {
         infoWindow.open(this.map, marker);
-      });
+      })
+    };
+
+
+    
+trackNani(){
+  console.log("initial toggle state", this.toggleStatus ) 
+  // var db = firebase.database();    
+  // db.ref("nani/YdSV2gxkYoO84TtnOoOjBauEJB33").update({ ava}); 
+  if(this.toggleStatus === true){        
+        console.log("start tracking")
+        let flag= false;
+        console.log("<<<<", this.nani)
+        let naniesFix=this.nani;
+        var Uuser = this.afAuth.auth.currentUser; 
+        console.log("nnnnn", naniesFix, Uuser.uid);    
+        for(var key in naniesFix){
+          if(key===Uuser.uid){
+            flag=true;
+            console.log("flag true")
+            var db = firebase.database();    
+            db.ref("nani/"+Uuser.uid).update({ available : true});
+          }
+        }
+    let that = this
+    if(flag===true){
+      var intervalFunc = setInterval(function timer() {
+          that.geolocation.getCurrentPosition().then(position => {
+            let location = new google.maps.LatLng(
+              position.coords.latitude,
+              position.coords.longitude
+            );
+            let naniLat = position.coords.latitude;
+            let nanilng = position.coords.longitude;
+              console.log("hereeeee",naniLat,nanilng,Uuser.uid)
+              var db = firebase.database();    
+              db.ref("nani/"+Uuser.uid).update({ lat: naniLat, lng:nanilng});
+              console.log("vvvvvv",Uuser.uid,naniLat,nanilng)
+              
+          })
+      
+        }, 1000); 
     }
+  }else{
+    console.log("inside false")
+    clearInterval(intervalFunc)
+    var Uuser = this.afAuth.auth.currentUser;     
+    var db = firebase.database();    
+    db.ref("nani/"+Uuser.uid).update({ available : false});
+  }
+}
 
     findNani() {
+      let that=this;
       this.geolocation.getCurrentPosition().then(position => {
-        let location = new google.maps.LatLng(
-          position.coords.latitude,
-          position.coords.longitude
-        );
-        let result = {};
-        let min = 0;
-        let userLat = position.coords.latitude;
-        let userlong = position.coords.longitude;
-        let distance;
-        for(var i=0; i<naniArr.length; i++){
-          distance= ((userLat-naniArr[i].lat)**2+(userlong-naniArr[i].long)**2)**0.5;
-          result[naniArr[i].name]=distance;
+              let location = new google.maps.LatLng(
+                position.coords.latitude,
+                position.coords.longitude
+              );
+              console.log("anaaaaaa", position.coords.latitude,position.coords.longitude)
+              let nani=that.nani;
+              console.log("find", nani)
+              let result = {};
+              let min = 0;
+              let userLat = position.coords.latitude;
+              let userlng = position.coords.longitude;
+              let distance;
+                for(var key in nani){
+                  console.log("key:          ",nani[key].available)
+                  if(nani[key].available){
+                  var R = 6371; // Radius of the earth in km
+                  var dLat = (Math.PI/180)*(userLat-nani[key].lat);  // deg2rad below
+                  var dLon = (Math.PI/180)*(userlng-nani[key].lng); 
+                  var a = 
+                  Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos((Math.PI/180)*(nani[key].lat)) * Math.cos((Math.PI/180)*(userLat)) * 
+                  Math.sin(dLon/2) * Math.sin(dLon/2); 
+                  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+                  distance = R * c; // Distance in km
+                  result[key]=distance;
+                  console.log("distance",distance, result)
+                  }
+                }
+                  let arrayKeys = Object.keys(result)
+
+                  let firstKey = arrayKeys[0]
+                  min = result[firstKey] 
+                    for(var key in result){
+                      if(result[key]<min){
+                        min = result[key];
+                      }
+                    }
+                      for(var key in result){
+                        if(result[key]===min){
+                          let name = key
+                        }
+                      }
+                       console.log(nani[name].lat, nani[name].lng, min);
+                       this.coordinates={   lat : nani[name].lat,
+                          lng : nani[name].lng
+                       }
+                        alert("The nearst nani:" + " " + name + " " + "It is" + " " + Math.floor(min*10)+ " km" +" "+ "far from you");
+                        
+          })
         }
-        let arrayKeys = Object.keys(result);
-        let firstKey = arrayKeys[0];
-        min = result[firstKey];
-        // console.log(arrayKeys,firstKey,min )     
-        for(var key in result){
-          if(result[key]<min){
-            min = result[key];
-          }
-        }
-        for(var key in result){
-          if(result[key]===min){
-            let name = key
-          }
-        }
-        console.log(name, min);
-      alert("The nearst nani:" + " " + name + " " + "It is" + " " + Math.floor(min*10)+ " km" +" "+ "far from you");
-      });
-    }
+
+  
+      
+  
+  request() {
+    this.findNani();
+    this.isRequested = true;
+    
+  };
+
+  cancel(){
+    this.isRequested = false;
+    let that=this;   
+      function delay(){
+       that.isCanceled=true;
+       alert('time is done')
+      }
+      setTimeout(delay, 60000)  };
 }

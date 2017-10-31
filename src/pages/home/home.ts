@@ -5,6 +5,8 @@ import { MainPage } from "../main/main";
 import { User } from "../../models/user"
 import { AngularFireAuth } from "angularfire2/auth"
 import { AngularFireDatabase } from "angularfire2/database";
+import { Facebook } from '@ionic-native/facebook';
+import firebase from 'firebase';
 // import { Observable } from 'rxjs/Observable';
 
 
@@ -13,31 +15,31 @@ import { AngularFireDatabase } from "angularfire2/database";
   templateUrl: 'home.html'
 })
 export class HomePage {
-
+  splash = true;
+  
 
   user = {} as User;
   nani;
+  token;
+  fbuser;
+
 
   constructor(public afAuth: AngularFireAuth,
     public navCtrl: NavController,
-    public db: AngularFireDatabase) {
+    public db: AngularFireDatabase,
+    public facebook : Facebook) {
     db.object('nani').valueChanges().subscribe(data => {
-      console.log(data)
+      // console.log(data)
       this.nani = data;
     });
-    // this.nani.snapshotChanges().subscribe(action => {
-    //   // console.log(action.type);
-    //   // console.log(action.key)
-    //   console.log(action.payload.val())
-    // });
+    }
+
+  ionViewDidLoad() {
+    setTimeout(() => this.splash = false, 4000);
   }
-
-
+  
   login(user: User) {
-    // console.log("debuggg",user)
-    // if(Error){
-    //   alert(Error)
-    // }
+    console.log("debuggg",user)
       let x = this
       this.afAuth.auth.signInWithEmailAndPassword(user.email, user.password).then(function () {
         var Uuser = x.afAuth.auth.currentUser;
@@ -49,7 +51,7 @@ export class HomePage {
           alert("you are not vertified please go to you email"+ user.email +"to vertify you account")
         }
       }).catch(function (error) {
-        var errorCode = error.code;
+        // var errorCode = error.code;
         var errorMessage = error.message;
         console.log("we are inside login error ")
         alert(errorMessage)
@@ -75,6 +77,25 @@ export class HomePage {
   //     // console.error(e)
   //   }
   // }
+
+  loginWithFB () {
+    this.facebook.login(['email']).then( (response) => {
+      const facebookCredential = firebase.auth.FacebookAuthProvider
+          .credential(response.authResponse.accessToken);
+
+      firebase.auth().signInWithCredential(facebookCredential)
+      .then((success) => {
+          alert("Firebase success: " + JSON.stringify(success));
+          this.fbuser = success;
+      })
+      .catch((error) => {
+          console.log("Firebase failure: " + JSON.stringify(error));
+      });
+
+    }).catch((error) => { console.log(error) });
+  }
+
+
   loadSignUp() {
     this.navCtrl.push(SignUpPage);
   }
