@@ -59,6 +59,7 @@ export class MainPage {
   }
 
   userPosition;
+  sessionNum=1;
 
   ionViewDidLoad() {
     console.log(
@@ -322,6 +323,7 @@ export class MainPage {
   }
 
   findNani() {
+    let name;
     let that = this;
     this.geolocation.getCurrentPosition().then(position => {
       let location = new google.maps.LatLng(
@@ -369,21 +371,27 @@ export class MainPage {
       }
       for (var key in result) {
         if (result[key] === min) {
-          let name = key;
+          name = key;
         }
       }
-      // console.log(that.nani[name].lat,"hellooooooooo")
-      //  console.log(nani[name].lat, nani[name].lng, min);
+      var currentTime = new Date(new Date().getTime()).toLocaleTimeString();
+      var Uuser = this.afAuth.auth.currentUser;
+      console.log(Uuser.uid,'jwan');
+      firebase.database().ref('services/' + Math.ceil(Math.random()*10000000)).set({
+        nani_id : name,
+        user_id : Uuser.uid,
+        user_position : that.userPosition,
+        start_time : currentTime
+      });
       var intervalFunc = setInterval(function timer() {
-        if(name){
-          console.log("debugg")
-          
-        that.coordinates = {
-          lat: that.nani[name].lat,
-          lng: that.nani[name].lng
-        };          
-        }
 
+        if(name){
+          console.log("debugg");
+          that.coordinates = {
+            lat: that.nani[name].lat,
+            lng: that.nani[name].lng
+          };          
+        }
         that.showDirectionAndDuration();
       }, 1000);
 
@@ -417,3 +425,4 @@ export class MainPage {
     setTimeout(delay, 60000);
   }
 }
+
