@@ -60,6 +60,7 @@ export class MainPage {
   }
 
   userPosition;
+  sessionNum=1;
 
   ionViewDidLoad() {
     console.log(
@@ -189,7 +190,8 @@ export class MainPage {
           outputDiv.innerHTML = "";
           for (var i = 0; i < originList.length; i++) {
             var results = response.rows[i].elements;
-            console.log(results);
+            // console.log(results);
+            console.log(x.nearNanny,'jwan')
             for (var j = 0; j < results.length; j++) {
               // x.distanceInfo['distance'] = results[j].distance.text;
               // x.distanceInfo['duration'] = results[j].duration.text;
@@ -281,54 +283,10 @@ export class MainPage {
     google.maps.event.addListener(marker, "click", () => {
       infoWindow.open(this.map, marker);
     });
-  }
-
-  trackNani() {
-    console.log("initial toggle state", this.toggleStatus);
-    // var db = firebase.database();
-    // db.ref("nani/YdSV2gxkYoO84TtnOoOjBauEJB33").update({ ava});
-    if (this.toggleStatus === true) {
-      console.log("start tracking");
-      let flag = false;
-      console.log("<<<<", this.nani);
-      let naniesFix = this.nani;
-      var Uuser = this.afAuth.auth.currentUser;
-      console.log("nnnnn", naniesFix, Uuser.uid);
-      for (var key in naniesFix) {
-        if (key === Uuser.uid) {
-          flag = true;
-          console.log("flag true");
-          var db = firebase.database();
-          db.ref("nani/" + Uuser.uid).update({ available: true });
-        }
-      }
-      let that = this;
-      if (flag === true) {
-        var intervalFunc = setInterval(function timer() {
-          that.geolocation.getCurrentPosition().then(position => {
-            let location = new google.maps.LatLng(
-              position.coords.latitude,
-              position.coords.longitude
-            );
-            let naniLat = position.coords.latitude;
-            let nanilng = position.coords.longitude;
-            console.log("hereeeee", naniLat, nanilng, Uuser.uid);
-            var db = firebase.database();
-            db.ref("nani/" + Uuser.uid).update({ lat: naniLat, lng: nanilng });
-            console.log("vvvvvv", Uuser.uid, naniLat, nanilng);
-          });
-        }, 1000);
-      }
-    } else {
-      console.log("inside false");
-      clearInterval(intervalFunc);
-      var Uuser = this.afAuth.auth.currentUser;
-      var db = firebase.database();
-      db.ref("nani/" + Uuser.uid).update({ available: false });
-    }
-  }
+  } 
 
   findNani() {
+    let name;
     let that = this;
     this.geolocation.getCurrentPosition().then(position => {
       let location = new google.maps.LatLng(
@@ -376,7 +334,7 @@ export class MainPage {
       }
       for (var key in result) {
         if (result[key] === min) {
-          let name = key;
+          name = key;
         }
       }
       that.nearNanny['firstName'] = that.nani[name]['firstName'];
@@ -384,16 +342,30 @@ export class MainPage {
       /////////////////////////////////////////////////////
       // console.log(that.nani[name]['firstName'], that.nani[name]['phoneNumber'] ,"hellooooooooo")
       // console.log(nani[name].lat, nani[name].lng, min);
+      var currentTime = new Date(new Date().getTime()).toLocaleTimeString();
+      var Uuser = this.afAuth.auth.currentUser;
+      console.log(Uuser.uid,'jwan');
+      var rand = Math.ceil(Math.random()*10000000);
+      firebase.database().ref('services/' + rand).set({
+        nani_id : name,
+        user_id : Uuser.uid,
+        user_position : that.userPosition,
+        start_time : currentTime
+      });
+      firebase.database().ref('active/' + rand).set({
+        nani_id : name,
+        user_id : Uuser.uid,
+        user_position : that.userPosition,
+        start_time : currentTime
+      });
       var intervalFunc = setInterval(function timer() {
         if(name){
-          console.log("debugg")
-
-        that.coordinates = {
-          lat: that.nani[name].lat,
-          lng: that.nani[name].lng
-        };          
+        // console.log("debugg");
+          that.coordinates = {
+            lat: that.nani[name].lat,
+            lng: that.nani[name].lng
+          };          
         }
-
         that.showDirectionAndDuration();
       }, 1000);
       console.log("The nearst nani: " + name +" It is" + Math.floor(min * 10) + " km" + " far from you")
@@ -427,3 +399,4 @@ export class MainPage {
   //   setTimeout(delay, 60000);
   // }
 }
+
