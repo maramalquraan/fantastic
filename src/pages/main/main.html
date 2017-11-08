@@ -5,39 +5,16 @@
         <div class="Aligner-item Aligner-item--bottom"></div>
     </div>
 </div>
-
 <ion-header style="background-color:#3ebffb">
-    <div id="mySidenav" class="sidenav">
+                <a><button class='pos' style="background-color:#3ebffb ;float: right" (click)="Logout()" ion-button>log out</button></a>
+    <!-- <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" (click)="closeNav()">&times;</a>
-        <img src="http://placehold.it/18x18" class=".navbar-nav>li>a.profile-image {
-                padding-top: 20px;
-                padding-bottom: 20px;
-            } img-circle" style="font-size: 25px;"> {{this.afAuth.auth.currentUser.email}}
         <a href="#" (click)="Logout()">Logout</a>
-
-
     </div>
-    <span style="font-size:30px;cursor:pointer;color:white;padding: 12px 20px" (click)="openNav()">&#9776;</span>
+    <span style="font-size:30px;cursor:pointer;color:white;padding: 12px 20px" (click)="openNav()">&#9776;</span> -->
 </ion-header>
-
 <ion-content padding>
-
-    <!-- <ion-toggle [(ngModel)]="toggleStatus" pulsado checked="false" (ionChange)="trackNani()">  </ion-toggle> -->
-
-    <!-- <button ion-button (click)="addMarker()"><ion-icon name="add"></ion-icon>Add Marker</button> -->
-    <!-- <ion-buttons>
-    <button ion-button (click)="findNani()"><ion-icon name="add"></ion-icon>Find Nani</button>
-</ion-buttons> -->
-    <!-- <div id="output"></div> -->
-    <!-- <ion-buttons>
-        <button ion-button (click)="addpolyLine()"><ion-icon name="add"></ion-icon>Add PolyLine</button>
-</ion-buttons> -->
-    <!-- <ion-buttons>
-        <button ion-button (click)="showDirectionAndDuration()"><ion-icon name="add"></ion-icon>Show Direction</button>
-</ion-buttons> -->
-
     <div #map id="map">
-
     </div>
     <div id="warnings-panel"></div>
     <div class="bottom request-controls">
@@ -48,10 +25,6 @@
             </ion-col>
         </ion-row>
     </div>
-    <!-- <div class="w3-container">
-        <div class="w3-bar w3-border w3-light-grey">
-                <div class="w3-bar-item" id="output"></div>
-        </div>
-    </div> -->
-
 </ion-content>
+
+   
