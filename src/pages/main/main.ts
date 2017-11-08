@@ -110,14 +110,14 @@ export class MainPage {
       if (data && data.email) {
         this.toast
           .create({
-            message: "welcome to Nany App, ${data.email}",
+            message: "Welcome to Easy Nany",
             duration: 2000
           })
           .present();
       } else {
         this.toast
           .create({
-            message: "welcome to Nany App, ${data.email}",
+            message: "Welcome to Easy Nany",
             duration: 2000
           })
           .present();
